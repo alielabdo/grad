@@ -1,37 +1,59 @@
-import Link from "next/link";
+'use client';
 
-export default function HomePage() {
+import Link from 'next/link';
+
+export default function Page() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+    <div className="flex min-h-screen items-center justify-center bg-white px-4">
+      <div className="w-full max-w-4xl space-y-8 text-center">
+        
+        <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
+          Welcome to <span className="text-blue-600">DesignCollab</span>
         </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
+
+        <p className="text-lg text-gray-600">
+          A collaborative design platform where creativity meets opportunity.
+        </p>
+
+        <div className="space-y-6">
+          <p className="text-gray-700">
+            Whether you're a <span className="font-semibold text-blue-600">designer</span> looking for exciting projects or a{' '}
+            <span className="font-semibold text-blue-600">customer</span> in need of stunning designs, DesignCollab connects you with the right people to bring your ideas to life.
+          </p>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-left">
+              <h2 className="text-xl font-semibold text-gray-900">For Designers</h2>
+              <p className="mt-2 text-gray-600">
+                Showcase your skills, collaborate with customers, and get paid for your creativity.
+              </p>
             </div>
+
+            <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-left">
+              <h2 className="text-xl font-semibold text-gray-900">For Customers</h2>
+              <p className="mt-2 text-gray-600">
+                Request custom designs, collaborate with talented designers, and bring your vision to life.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
+          <Link
+            href="/signup"
+            className="w-full rounded-md bg-blue-600 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+          >
+            Sign Up
           </Link>
           <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
+            href="/signin"
+            className="w-full rounded-md bg-white px-6 py-3 text-sm font-medium text-blue-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
           >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
+            Sign In
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
