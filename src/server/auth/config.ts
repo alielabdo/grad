@@ -1,6 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import {type NextAuthConfig, type DefaultSession} from "next-auth";
-import { type Adapter } from "@auth/core/adapters";
 import Credentials from "next-auth/providers/credentials";
 import { signInSchema } from "~/schema";
 import bcrypt from "bcryptjs";
@@ -16,12 +15,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
-      role: string; 
     } & DefaultSession["user"];
-  }
-
-  interface User {
-    role: string;
   }
 }
 
@@ -33,7 +27,6 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     Credentials({
-      name: 'Credentials',
       credentials: {
         email: {},
         password: {},
@@ -63,8 +56,8 @@ export const authConfig = {
           }
           
           return user;
-
-        } catch (error) {
+        } 
+        catch (error) {
           return null;
         }
       },
@@ -73,7 +66,7 @@ export const authConfig = {
   session: {
     strategy: "jwt",
   },
-  adapter: PrismaAdapter(db) as Adapter,
+  adapter: PrismaAdapter(db),
   callbacks: {
     session: ({ session, token }) => {
       return {
@@ -81,7 +74,6 @@ export const authConfig = {
         user: {
           ...session.user,
           id: token.sub,
-          role: token.role as string,
         },
       };
     },

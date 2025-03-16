@@ -2,7 +2,7 @@
 
 import { signout } from "../actions/auth";
 
-export function Page() {
+export default function Page() {
   return (
     <div>
       <p>Dashboard</p>
