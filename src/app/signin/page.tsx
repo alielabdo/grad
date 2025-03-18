@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { authenticate } from '../actions/auth';
+import { useStateContext } from '../contexts/ContextProvider'; 
 
 export default function Page() {
   const [errorMessage, formAction, isPending] = useActionState(
@@ -10,6 +11,7 @@ export default function Page() {
     undefined
   );
 
+  const {role} = useStateContext()
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
       <div className="w-full max-w-sm space-y-6">
@@ -37,7 +39,7 @@ export default function Page() {
           Sign In
         </h1>
         <form action={formAction} className="space-y-4">
-          <input type="hidden" name="redirectTo" value="/dashboard" />
+          <input type="hidden" name="redirectTo" value={role === "CUSTOMER" ? '/cus_dashboard' : '/des_dashboard'} />
 
           <div className="relative h-fit">
             <input

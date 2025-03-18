@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { useActionState } from 'react';
 import { register } from '../actions/auth';
+import { useStateContext } from '../contexts/ContextProvider';
 
 export default function Page() {
   const [errorMessage, formAction, isPending] = useActionState(
     register,
     undefined
   );
+  const {setRole} = useStateContext()
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
@@ -72,6 +74,7 @@ export default function Page() {
                   type="radio"
                   name="role"
                   value="CUSTOMER"
+                  onChange={() => setRole("CUSTOMER")}
                   className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600"
                   defaultChecked
                 />
@@ -83,6 +86,7 @@ export default function Page() {
                   type="radio"
                   name="role"
                   value="DESIGNER"
+                  onChange={() => setRole('DESIGNER')}
                   className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600"
                 />
                 <span className="text-sm text-gray-700">Designer</span>

@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import {Inter} from 'next/font/google'
 import { type Metadata } from "next";
+import { ContextProvider } from "./contexts/ContextProvider";
 
 export const metadata: Metadata = {
   title: "Drawing",
@@ -19,7 +20,11 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.className}`}>
-      <body>{children}</body>
+      <body>
+        <ContextProvider>
+          {children}
+        </ContextProvider>
+      </body>
     </html>
   );
 }
