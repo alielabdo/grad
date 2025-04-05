@@ -94,7 +94,18 @@ export default function Canvas() {
           </svg>
         </div>
       </main>
-      <ToolsBar canvasState={canvasState} setCanvasState={(newState) => setCanvasState(newState)} />
+      <ToolsBar
+        canvasState={canvasState}
+        setCanvasState={(newState) => setCanvasState(newState)}
+        zoomIn={function (): void {
+          throw new Error("Function not implemented.");
+        } } 
+        zoomOut={function (): void {
+          throw new Error("Function not implemented.");
+        } } 
+        canZoomIn={false} 
+        canZoomOut={false}
+      />
     </div>
   )
 }
