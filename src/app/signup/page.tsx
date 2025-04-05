@@ -10,7 +10,7 @@ export default function Page() {
     register,
     undefined
   );
-  const {setRole} = useStateContext()
+  const {role,setRole} = useStateContext()
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-white px-4">
@@ -39,6 +39,7 @@ export default function Page() {
           Sign Up
         </h1>
         <form action={formAction} className="space-y-4">
+          <input type="hidden" name="redirectTo" value={role === "CUSTOMER" ? "/cus_dashboard" : "/des_dashboard"}/>
           
           <div className="relative h-fit">
             <input
