@@ -17,8 +17,25 @@ export async function authenticate(
   formData: FormData
 ) {
   try {
-    await signIn('credentials',formData);
+    const email = formData.get('email')?.toString();
+    const password = formData.get('password')?.toString();
 
+    await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    });
+
+    const user = await db.user.findUnique({
+      where: { email },
+    });
+    
+    if (user?.role === "CUSTOMER") {
+      redirect('/cus_dashboard');
+    } else {
+      redirect('/des_dashboard');
+    }
+    
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

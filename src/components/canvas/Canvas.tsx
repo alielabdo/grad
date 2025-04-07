@@ -6,7 +6,7 @@ import LayerComponent from "./LayerComponent";
 import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode } from "~/types";
 import {nanoid} from 'nanoid'
 import { LiveObject } from "@liveblocks/client";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import ToolsBar from "../toolsbar/ToolsBar";
 
 const MAX_LAYERS = 100;
@@ -17,6 +17,7 @@ export default function Canvas() {
   const layerIds = useStorage((root) => root.layerIds)
 
   const [camera,setCamera] = useState<Camera>({x:0,y:0,zoom:1})
+
   const [canvasState, setCanvasState] = useState<CanvasState>({mode: CanvasMode.None})
 
   const insertLayer = useMutation(
@@ -66,6 +67,14 @@ export default function Canvas() {
     },[]
   )
 
+  const onWheel = useCallback((e: React.WheelEvent) => {
+    setCamera((camera) => ({
+      x: camera.x - e.deltaX,
+      y: camera.y - e.deltaY,
+      zoom: camera.zoom,
+    }));
+  }, []);
+
   const onPointerUp = useMutation(({}, e:React.PointerEvent) => {
     const point = pointerEventToCanvasPoint(e,camera)
 
@@ -87,8 +96,12 @@ export default function Canvas() {
           style={{backgroundColor: roomColor ? colorToCss(roomColor) : "#1E1E1E"}}
           className="h-full w-full touch-none"
         >
-          <svg onPointerUp={onPointerUp} className="w-full h-full">
-            <g>
+          <svg onWheel={onWheel} onPointerUp={onPointerUp} className="w-full h-full">
+            <g 
+              style={{
+                transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`
+              }}
+            >
               {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId}/>))}
             </g>
           </svg>
@@ -97,14 +110,14 @@ export default function Canvas() {
       <ToolsBar
         canvasState={canvasState}
         setCanvasState={(newState) => setCanvasState(newState)}
-        zoomIn={function (): void {
-          throw new Error("Function not implemented.");
-        } } 
-        zoomOut={function (): void {
-          throw new Error("Function not implemented.");
-        } } 
-        canZoomIn={false} 
-        canZoomOut={false}
+        zoomIn={() => {
+          setCamera((camera) => ({...camera, zoom: camera.zoom + 0.1}))
+        }} 
+        zoomOut={() => {
+          setCamera((camera) => ({...camera, zoom: camera.zoom - 0.1}))
+        }} 
+        canZoomIn={camera.zoom < 2} 
+        canZoomOut={camera.zoom > 0.5}
       />
     </div>
   )

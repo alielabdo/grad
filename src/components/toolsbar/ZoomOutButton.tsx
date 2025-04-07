@@ -1,5 +1,16 @@
-export default function ZoomOutButton() {
+import IconButton from "./IconButton"
+import {AiOutlineZoomOut} from 'react-icons/ai'
+
+export default function ZoomOutButton({
+  onClick,
+  disabled
+} : {
+  onClick: () => void,
+  disabled: boolean
+}) {
   return (
-    <div></div>
+    <IconButton onClick={onClick} disabled={disabled}>
+      <AiOutlineZoomOut size={22} color="#888888"/>
+    </IconButton>
   )
 }

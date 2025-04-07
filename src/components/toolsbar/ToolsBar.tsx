@@ -36,8 +36,8 @@ export default function ToolsBar({
         />
         <div className="w-[1px] self-stretch bg-black/10"/>
         <div className="flex items-center justify-center">
-          <ZoomInButton onClick={zoomIn} disabled={canZoomIn}/>
-          <ZoomOutButton />
+          <ZoomInButton onClick={zoomIn} disabled={!canZoomIn}/>
+          <ZoomOutButton onClick={zoomOut} disabled={!canZoomOut}/>
         </div>
       </div>
     </div>

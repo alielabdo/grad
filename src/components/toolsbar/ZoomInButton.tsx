@@ -10,7 +10,7 @@ export default function ZoomInButton({
 }) {
   return (
     <IconButton onClick={onClick} disabled={disabled}>
-      <AiOutlineZoomIn size={32} color="#888888"/>
+      <AiOutlineZoomIn size={22} color="#888888"/>
     </IconButton>
   )
 }

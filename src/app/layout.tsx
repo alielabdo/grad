@@ -2,7 +2,6 @@ import "~/styles/globals.css";
 
 import {Inter} from 'next/font/google'
 import { type Metadata } from "next";
-import { ContextProvider } from "./contexts/ContextProvider";
 
 export const metadata: Metadata = {
   title: "Drawing",
@@ -21,9 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.className}`}>
       <body>
-        <ContextProvider>
-          {children}
-        </ContextProvider>
+        {children}
       </body>
     </html>
   );

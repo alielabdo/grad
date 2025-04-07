@@ -89,3 +89,8 @@ export enum CanvasMode {
   Dragging,
   Inserting
 }
+
+export enum Role {
+  CUSTOMER,
+  DESIGNER
+}
