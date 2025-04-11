@@ -87,6 +87,32 @@ export default function Canvas() {
         point
       )
     }
+    else if (canvasState.mode === CanvasMode.Dragging) {
+      setCanvasState({mode: CanvasMode.Dragging,origin: null})
+    }
+  },[canvasState, setCanvasState, insertLayer])
+
+  const onPointerDown = useMutation(({}, e:React.PointerEvent) => {
+    const point = pointerEventToCanvasPoint(e,camera)
+
+    if (canvasState.mode === CanvasMode.Dragging) {
+      setCanvasState({mode: CanvasMode.Dragging, origin: point})
+    }
+  },[canvasState.mode, setCanvasState, camera])
+
+  const onPointerMove = useMutation(({}, e:React.PointerEvent) => {
+    const point = pointerEventToCanvasPoint(e,camera)
+
+    if (canvasState.mode === CanvasMode.Dragging && canvasState.origin !== null) {
+      const deltaX = e.movementX
+      const deltaY = e.movementY
+
+      setCamera((camera) => ({
+        x: camera.x + deltaX,
+        y: camera.y + deltaY,
+        zoom: camera.zoom
+      }))
+    }
   },[canvasState, setCanvasState, insertLayer])
 
   return (
@@ -96,7 +122,12 @@ export default function Canvas() {
           style={{backgroundColor: roomColor ? colorToCss(roomColor) : "#1E1E1E"}}
           className="h-full w-full touch-none"
         >
-          <svg onWheel={onWheel} onPointerUp={onPointerUp} className="w-full h-full">
+          <svg 
+            onWheel={onWheel} 
+            onPointerUp={onPointerUp} className="w-full h-full"
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+          >
             <g 
               style={{
                 transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`
