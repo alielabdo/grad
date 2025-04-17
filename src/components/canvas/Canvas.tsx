@@ -3,7 +3,7 @@
 import { useMutation, useSelf, useStorage } from "@liveblocks/react";
 import { colorToCss, penPointsToPathLayer, pointerEventToCanvasPoint } from "~/utils";
 import LayerComponent from "./LayerComponent";
-import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode } from "~/types";
+import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer } from "~/types";
 import {nanoid} from 'nanoid'
 import { LiveObject } from "@liveblocks/client";
 import React, { useCallback, useState } from "react";
@@ -61,6 +61,23 @@ export default function Canvas() {
           opacity:100,
         })
       }
+      else if(layerType === LayerType.Text) {
+        layer = new LiveObject<TextLayer>({
+          type: LayerType.Text,
+          x: position.x,
+          y: position.y,
+          text: "Text",
+          height: 100,
+          width: 100,
+          fontSize: 16,
+          fontWeight: 400,
+          fontFamily: "Inter",
+          fill: {r:217, g:217, b:217},
+          stroke: {r:217, g:217, b:217},
+          opacity: 100,
+        })
+      }
+
       if (layer) {
         liveLayerIds.push(layerId);
         liveLayers.set(layerId, layer);
