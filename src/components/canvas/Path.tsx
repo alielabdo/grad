@@ -1,6 +1,5 @@
-import { Color } from "~/types";
-import {getStroke} from 'perfect-freehand'
-import { colorToCss, getSvgPathFromStroke } from "~/utils";
+import { getStroke } from 'perfect-freehand'
+import { getSvgPathFromStroke } from "~/utils";
 
 export default function Path({
   x, 
@@ -8,7 +7,8 @@ export default function Path({
   stroke, 
   fill, 
   opacity, 
-  points 
+  points,
+  onPointerDown
 } : 
 {
   x: number,
@@ -16,7 +16,8 @@ export default function Path({
   stroke?: string, 
   fill: string, 
   opacity: number, 
-  points: number[][];
+  points: number[][],
+  onPointerDown?: (e: React.PointerEvent) => void,
 }) {
 
   const pathData = getSvgPathFromStroke(getStroke(points, {
@@ -28,6 +29,7 @@ export default function Path({
   
   return (
     <path
+      onPointerDown={onPointerDown}
       style={{transform: `translate(${x}px, ${y}px)`}}
       d={pathData} 
       fill={fill} 

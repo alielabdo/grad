@@ -6,7 +6,12 @@ import { colorToCss } from "~/utils";
 export default function Text({
   id,
   layer,
-} : {id : string , layer : TextLayer}) {
+  onPointerDown
+} : {
+  id : string , 
+  layer : TextLayer
+  onPointerDown: (e: React.PointerEvent, layerId: string) => void
+}) {
   const {x,y,width,height,fill,stroke,opacity,text,fontSize,fontFamily,fontWeight} = layer
 
   const [isEditing, setIsEditing] = useState(false);
@@ -49,43 +54,47 @@ export default function Text({
 
   return (
     <g onDoubleClick={handleDoubleClick}>
-      {isEditing ? 
-        <foreignObject 
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-        >
-          <input
-            ref={inputRef} 
-            type="text" 
-            value={inputValue}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
-            style={{
-              fontSize: `${fontSize}px`,
-              color: colorToCss(fill),
-              width: "100%",
-              border: "none",
-              outline: "none",
-              background: "transparent"
-            }}
-          />
-        </foreignObject>
-        :
-        <text
-          x={x}
-          y={y + fontSize}
-          fontSize={fontSize}
-          fontWeight={fontWeight}
-          fontFamily={fontFamily}
-          fill={colorToCss(fill)}
-          stroke={colorToCss(stroke)}
-          opacity={`${opacity}%`}
-        >
-          {text}
-        </text>
+      {isEditing ? (
+          <foreignObject 
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+          >
+            <input
+              ref={inputRef} 
+              type="text" 
+              value={inputValue}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
+              style={{
+                fontSize: `${fontSize}px`,
+                color: colorToCss(fill),
+                width: "100%",
+                border: "none",
+                outline: "none",
+                background: "transparent"
+              }}
+            />
+          </foreignObject> 
+        )
+        : 
+        (
+          <text
+            onPointerDown={(e) => onPointerDown(e, id)}
+            x={x}
+            y={y + fontSize}
+            fontSize={fontSize}
+            fontWeight={fontWeight}
+            fontFamily={fontFamily}
+            fill={colorToCss(fill)}
+            stroke={colorToCss(stroke)}
+            opacity={`${opacity}%`}
+          >
+            {text}
+          </text>
+        )
       }
     </g>
   )

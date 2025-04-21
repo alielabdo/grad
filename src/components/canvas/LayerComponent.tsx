@@ -7,21 +7,28 @@ import Text from "./Text";
 import Path from "./Path";
 import { colorToCss } from "~/utils";
 
-const LayerComponent = memo(({id}: {id: string}) => {
+const LayerComponent = memo(({
+  id, 
+  onLayerPointerDown
+} : {
+  id: string, 
+  onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void
+}) => {
   const layer = useStorage((root) => root.layers.get(id))
   if(!layer) {
     return null;
   }
   switch(layer.type) {
     case LayerType.Rectangle :
-      return <Rectangle id={id} layer={layer}/>;
+      return <Rectangle id={id} layer={layer} onPointerDown={onLayerPointerDown}/>;
     case LayerType.Ellipse :
-      return <Ellipse id={id} layer={layer} />;
+      return <Ellipse id={id} layer={layer} onPointerDown={onLayerPointerDown}/>;
     case LayerType.Text :
-      return  <Text id={id} layer={layer}/>
+      return  <Text id={id} layer={layer} onPointerDown={onLayerPointerDown}/>
     case LayerType.Path :
       return (
         <Path 
+          onPointerDown={(e) => onLayerPointerDown(e, id)}
           points={layer.points} 
           x={layer.x} 
           y={layer.y} 

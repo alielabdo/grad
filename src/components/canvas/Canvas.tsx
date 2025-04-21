@@ -1,14 +1,15 @@
 'use client';
 
-import { useMutation, useSelf, useStorage } from "@liveblocks/react";
-import { colorToCss, penPointsToPathLayer, pointerEventToCanvasPoint } from "~/utils";
+import { useMutation, useMyPresence, useSelf, useStorage } from "@liveblocks/react";
+import { colorToCss, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
 import LayerComponent from "./LayerComponent";
-import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer } from "~/types";
+import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH } from "~/types";
 import {nanoid} from 'nanoid'
 import { LiveObject } from "@liveblocks/client";
 import React, { useCallback, useState } from "react";
 import ToolsBar from "../toolsbar/ToolsBar";
 import Path from "./Path";
+import SelectionBox from "./SelectionBox";
 
 const MAX_LAYERS = 100;
 
@@ -22,6 +23,32 @@ export default function Canvas() {
   const [camera,setCamera] = useState<Camera>({x:0,y:0,zoom:1})
 
   const [canvasState, setCanvasState] = useState<CanvasState>({mode: CanvasMode.None})
+
+  const onLayerPointerDown = useMutation(({self, setMyPresence}, e: React.PointerEvent, layerId: string) => {
+    if (
+      canvasState.mode === CanvasMode.Pencil || canvasState.mode === CanvasMode.Inserting
+    ) {
+      return;
+    }
+
+    e.stopPropagation();
+    if (!self.presence.selection.includes(layerId)) {
+      setMyPresence({
+        selection: [layerId]
+      })
+    }
+
+    const point = pointerEventToCanvasPoint(e, camera)
+    setCanvasState({mode: CanvasMode.Translating, current: point})
+  },[canvasState.mode, camera])
+
+  const onResizeHandlePointerDown = useCallback((corner: Side, initialBounds: XYWH) => {
+    setCanvasState({
+      mode: CanvasMode.Resizing,
+      initialBounds,
+      corner
+    })
+  },[])
 
   const insertLayer = useMutation(
     (
@@ -122,11 +149,18 @@ export default function Canvas() {
     setCanvasState({mode: CanvasMode.Pencil})
   },[])
 
+  const unselectLayer = useMutation(({self, setMyPresence}) => {
+    if (self.presence.selection.length > 0) {
+      setMyPresence({selection: []})
+    }
+  },[])
+
   const onPointerUp = useMutation(({}, e:React.PointerEvent) => {
     const point = pointerEventToCanvasPoint(e,camera)
 
     if (canvasState.mode === CanvasMode.None) {
       setCanvasState({mode: CanvasMode.None})
+      unselectLayer();
     }
     else if (canvasState.mode === CanvasMode.Inserting) {
       insertLayer(
@@ -140,7 +174,50 @@ export default function Canvas() {
     else if (canvasState.mode === CanvasMode.Pencil) {
       insertPath();
     }
-  },[canvasState, setCanvasState, insertLayer])
+    else {
+      setCanvasState({mode: CanvasMode.None})
+    }
+  },[canvasState, setCanvasState, insertLayer, unselectLayer])
+
+  const translateSelectedLayer = useMutation(({storage, self}, point: Point) => {
+    if (canvasState.mode !== CanvasMode.Translating) return;
+
+    const offset = {
+      x: point.x - canvasState.current.x,
+      y: point.y - canvasState.current.y,
+    }
+
+    const liveLayers = storage.get("layers");
+    for (const id of self.presence.selection) {
+      const layer = liveLayers.get(id)
+      if (layer) {
+        layer.update({
+          x: layer.get("x") + offset.x,
+          y: layer.get("y") + offset.y,
+        })
+      }
+    }
+
+    setCanvasState({mode: CanvasMode.Translating, current: point})
+  },[canvasState])
+
+  const resizeSelectedLayer = useMutation(({storage, self}, point: Point) => {
+
+    if (canvasState.mode !== CanvasMode.Resizing) {
+      return;
+    }
+
+    const bounds = resizeBounds(canvasState.initialBounds, canvasState.corner, point)
+
+    const liveLayers = storage.get("layers")
+
+    if(self.presence.selection.length > 0) {
+      const layer = liveLayers.get(self.presence.selection[0]!)
+      if(layer) {
+        layer.update(bounds)
+      }
+    }
+  },[canvasState])
   
   const startDrawing = useMutation(({setMyPresence}, point: Point, pressure: number) => {
     setMyPresence({
@@ -191,7 +268,14 @@ export default function Canvas() {
     else if (canvasState.mode === CanvasMode.Pencil) {
       continueDrawing(point, e);
     }
-  },[canvasState, setCanvasState, insertLayer, continueDrawing])
+    else if (canvasState.mode === CanvasMode.Resizing) {
+      resizeSelectedLayer(point);
+    }
+    else if (canvasState.mode === CanvasMode.Translating) {
+      translateSelectedLayer(point);
+    }
+    
+  },[canvasState, setCanvasState, insertLayer, continueDrawing, resizeSelectedLayer])
 
   return (
     <div className="flex h-screen w-full">
@@ -211,7 +295,9 @@ export default function Canvas() {
                 transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`
               }}
             >
-              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId}/>))}
+              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown}/>))}
+
+              <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown}/>
             </g>
             {
               pencilDraft !== null && 

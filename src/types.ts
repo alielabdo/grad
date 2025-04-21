@@ -84,11 +84,34 @@ export type CanvasState = {
   layerType: LayerType.Rectangle | LayerType.Ellipse | LayerType.Text
 } | {
   mode: CanvasMode.Pencil
+} | {
+  mode: CanvasMode.Resizing
+  initialBounds: XYWH
+  corner: Side
+} | {
+  mode: CanvasMode.Translating
+  current: Point
 }
 
 export enum CanvasMode {
   None,
   Dragging,
   Inserting,
-  Pencil
+  Pencil,
+  Resizing,
+  Translating
+}
+
+export type XYWH = {
+  x: number,
+  y: number,
+  width: number,
+  height: number
+}
+
+export enum Side {
+  Top = 1,
+  Bottom = 2,
+  Left = 4,
+  Right = 8,
 }
