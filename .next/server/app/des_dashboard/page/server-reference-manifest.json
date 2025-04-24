@@ -1,0 +1,38 @@
+{
+  "node": {
+    "00d81817f0e84ddee4f43e663e052f358be6c13447": {
+      "workers": {
+        "app/des_dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/des_dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/des_dashboard/page": "action-browser"
+      }
+    },
+    "604ff971ff2504316e1f9b6bf5942aff6653a77962": {
+      "workers": {
+        "app/des_dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/des_dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/des_dashboard/page": "action-browser"
+      }
+    },
+    "605a350b911f3de1d0d28fd91c8552aa008ab01036": {
+      "workers": {
+        "app/des_dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/des_dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/src/app/actions/auth.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/des_dashboard/page": "action-browser"
+      }
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,5 @@
+{
+  "/api/liveblocks-auth/route": "app/api/liveblocks-auth/route.js",
+  "/des_dashboard/[id]/page": "app/des_dashboard/[id]/page.js",
+  "/page": "app/page.js"
+}
