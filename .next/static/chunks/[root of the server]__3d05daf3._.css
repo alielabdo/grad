@@ -778,6 +778,10 @@ img, video {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.opacity-0 {
+  opacity: 0;
+}
+
 .shadow-\[0_0_3px_rgba\(0\,0\,0\,0\,18\)\] {
   --tw-shadow: 0 0 3px rgba(0, 0, 0, 0, 18);
   --tw-shadow-colored: 0 0 3px var(--tw-shadow-color);
@@ -894,6 +898,10 @@ img, video {
 
 .disabled\:opacity-50:disabled {
   opacity: .5;
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 
 @media (width >= 640px) {

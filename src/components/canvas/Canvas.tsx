@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, useMyPresence, useSelf, useStorage } from "@liveblocks/react";
+import { useCanRedo, useCanUndo, useHistory, useMutation, useMyPresence, useSelf, useStorage } from "@liveblocks/react";
 import { colorToCss, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
 import LayerComponent from "./LayerComponent";
 import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH } from "~/types";
@@ -22,6 +22,12 @@ export default function Canvas() {
 
   const [camera,setCamera] = useState<Camera>({x:0,y:0,zoom:1})
 
+  const history = useHistory();
+
+  const canUndo = useCanUndo();
+  const canRedo = useCanRedo();
+
+
   const [canvasState, setCanvasState] = useState<CanvasState>({mode: CanvasMode.None})
 
   const onLayerPointerDown = useMutation(({self, setMyPresence}, e: React.PointerEvent, layerId: string) => {
@@ -31,24 +37,26 @@ export default function Canvas() {
       return;
     }
 
+    history.pause()
     e.stopPropagation();
     if (!self.presence.selection.includes(layerId)) {
       setMyPresence({
         selection: [layerId]
-      })
+      }, {addToHistory: true})
     }
 
     const point = pointerEventToCanvasPoint(e, camera)
     setCanvasState({mode: CanvasMode.Translating, current: point})
-  },[canvasState.mode, camera])
+  },[canvasState.mode, camera, history])
 
   const onResizeHandlePointerDown = useCallback((corner: Side, initialBounds: XYWH) => {
+    history.pause()
     setCanvasState({
       mode: CanvasMode.Resizing,
       initialBounds,
       corner
     })
-  },[])
+  },[history])
 
   const insertLayer = useMutation(
     (
@@ -151,7 +159,7 @@ export default function Canvas() {
 
   const unselectLayer = useMutation(({self, setMyPresence}) => {
     if (self.presence.selection.length > 0) {
-      setMyPresence({selection: []})
+      setMyPresence({selection: []}, {addToHistory: true})
     }
   },[])
 
@@ -177,7 +185,8 @@ export default function Canvas() {
     else {
       setCanvasState({mode: CanvasMode.None})
     }
-  },[canvasState, setCanvasState, insertLayer, unselectLayer])
+    history.resume()
+  },[canvasState, setCanvasState, insertLayer, unselectLayer, history])
 
   const translateSelectedLayer = useMutation(({storage, self}, point: Point) => {
     if (canvasState.mode !== CanvasMode.Translating) return;
@@ -313,6 +322,7 @@ export default function Canvas() {
           </svg>
         </div>
       </main>
+
       <ToolsBar
         canvasState={canvasState}
         setCanvasState={(newState) => setCanvasState(newState)}
@@ -324,6 +334,10 @@ export default function Canvas() {
         }} 
         canZoomIn={camera.zoom < 2} 
         canZoomOut={camera.zoom > 0.5}
+        undo={() => history.undo()}
+        redo={() => history.redo()}
+        canRedo={canRedo}
+        canUndo={canUndo}
       />
     </div>
   )
