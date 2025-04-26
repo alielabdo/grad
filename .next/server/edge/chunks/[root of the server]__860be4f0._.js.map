@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 23, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/middleware.ts"],"sourcesContent":["import { NextResponse, type NextRequest } from \"next/server\";\r\nimport { getToken } from \"next-auth/jwt\";\r\n\r\nexport default async function middleware(req: NextRequest) {\r\n  const session = await getToken({ req, secret: process.env.AUTH_SECRET });\r\n\r\n  if (!session) {\r\n    const newUrl = new URL('/signin', req.nextUrl.origin);\r\n    return NextResponse.redirect(newUrl);\r\n  }\r\n\r\n  return NextResponse.next();\r\n}\r\n\r\nexport const config = {\r\n  matcher: [\"/cus_dashboard\", \"/cus_dashboard/:path*\", \"/des_dashboard\", \"/des_dashboard/:path*\"],\r\n};"],"names":[],"mappings":";;;;AAAA;AAAA;AACA;AAAA;;;AAEe,eAAe,WAAW,GAAgB;IACvD,MAAM,UAAU,MAAM,CAAA,GAAA,6IAAA,CAAA,WAAQ,AAAD,EAAE;QAAE;QAAK,QAAQ,QAAQ,GAAG,CAAC,WAAW;IAAC;IAEtE,IAAI,CAAC,SAAS;QACZ,MAAM,SAAS,IAAI,IAAI,WAAW,IAAI,OAAO,CAAC,MAAM;QACpD,OAAO,6LAAA,CAAA,eAAY,CAAC,QAAQ,CAAC;IAC/B;IAEA,OAAO,6LAAA,CAAA,eAAY,CAAC,IAAI;AAC1B;AAEO,MAAM,SAAS;IACpB,SAAS;QAAC;QAAkB;QAAyB;QAAkB;KAAwB;AACjG"}}]
-}
