@@ -34,42 +34,42 @@ export default function ShapesSelectionButton({
 
   return (
     <div className="relative flex" ref={menuRef}>
-    <IconButton 
-      isActive={isActive} 
-      onClick={() => onClick(LayerType.Rectangle)}
-    >
-      {canvasState.mode !== CanvasMode.Inserting && <IoSquareOutline className="w-5 h-5"/>}
+      <IconButton 
+        isActive={isActive} 
+        onClick={() => onClick(LayerType.Rectangle)}
+      >
+        {canvasState.mode !== CanvasMode.Inserting && <IoSquareOutline className="w-5 h-5"/>}
 
-      {canvasState.mode === CanvasMode.Inserting && (canvasState.layerType === LayerType.Rectangle || canvasState.layerType === LayerType.Text) && <IoSquareOutline className="w-5 h-5"/>}
+        {canvasState.mode === CanvasMode.Inserting && (canvasState.layerType === LayerType.Rectangle || canvasState.layerType === LayerType.Text) && <IoSquareOutline className="w-5 h-5"/>}
 
-      {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse && <IoEllipseOutline className="w-5 h-5"/>}
-      
-    </IconButton>
-    <button 
-      onClick={() => setOpen(!open)}
-      className="ml-1"
-    >
-      <MenuIcon />
-    </button>
-    {open && (
-      <div className="absolute -top-20 mt-1 min-w-[150px] rounded-xl bg-[#1e1e1e] p-2 shadow-lg">
-        <button className={`flex w-full items-center rounded-md p-1 text-white hover:bg-blue-500 ${canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Rectangle ? "bg-blue-500" : ""}`} onClick={() => handleClick(LayerType.Rectangle)}>
-          <span className="w-5 text-xs">
-            {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Rectangle && "✓"}
-          </span>
-          <IoSquareOutline className="mr-2 h-4 w-4"/>
-          <span className="text-xs">Rectangle</span>
-        </button>
+        {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse && <IoEllipseOutline className="w-5 h-5"/>}
+        
+      </IconButton>
+      <button 
+        onClick={() => setOpen(!open)}
+        className="ml-1"
+      >
+        <MenuIcon />
+      </button>
+      {open && (
+        <div className="absolute -top-20 mt-1 min-w-[150px] rounded-xl bg-[#1e1e1e] p-2 shadow-lg">
+          <button className={`flex w-full items-center rounded-md p-1 text-white hover:bg-blue-500 ${canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Rectangle ? "bg-blue-500" : ""}`} onClick={() => handleClick(LayerType.Rectangle)}>
+            <span className="w-5 text-xs">
+              {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Rectangle && "✓"}
+            </span>
+            <IoSquareOutline className="mr-2 h-4 w-4"/>
+            <span className="text-xs">Rectangle</span>
+          </button>
 
-        <button className={`flex w-full items-center rounded-md p-1 text-white hover:bg-blue-500 ${canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse ? "bg-blue-500" : ""}`} onClick={() => handleClick(LayerType.Ellipse)}>
-          <span className="w-5 text-xs">
-            {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse && "✓"}
-          </span>
-          <IoEllipseOutline className="mr-2 h-4 w-4"/>
-          <span className="text-xs">Ellipse</span>
-        </button>
-      </div>
-    )}
-  </div>
+          <button className={`flex w-full items-center rounded-md p-1 text-white hover:bg-blue-500 ${canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse ? "bg-blue-500" : ""}`} onClick={() => handleClick(LayerType.Ellipse)}>
+            <span className="w-5 text-xs">
+              {canvasState.mode === CanvasMode.Inserting && canvasState.layerType === LayerType.Ellipse && "✓"}
+            </span>
+            <IoEllipseOutline className="mr-2 h-4 w-4"/>
+            <span className="text-xs">Ellipse</span>
+          </button>
+        </div>
+      )}
+    </div>
   )
 }

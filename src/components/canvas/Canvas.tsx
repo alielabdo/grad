@@ -1,7 +1,7 @@
 'use client';
 
 import { useCanRedo, useCanUndo, useHistory, useMutation, useMyPresence, useSelf, useStorage } from "@liveblocks/react";
-import { colorToCss, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
+import { colorToCss, findIntersectionLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
 import LayerComponent from "./LayerComponent";
 import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH } from "~/types";
 import {nanoid} from 'nanoid'
@@ -118,6 +118,7 @@ export default function Canvas() {
         liveLayers.set(layerId, layer);
 
         setMyPresence({selection: [layerId]}, {addToHistory: true})
+        setCanvasState({ mode : CanvasMode.None})
       }
     },[]
   )
@@ -162,31 +163,6 @@ export default function Canvas() {
       setMyPresence({selection: []}, {addToHistory: true})
     }
   },[])
-
-  const onPointerUp = useMutation(({}, e:React.PointerEvent) => {
-    const point = pointerEventToCanvasPoint(e,camera)
-
-    if (canvasState.mode === CanvasMode.None) {
-      setCanvasState({mode: CanvasMode.None})
-      unselectLayer();
-    }
-    else if (canvasState.mode === CanvasMode.Inserting) {
-      insertLayer(
-        canvasState.layerType,
-        point
-      )
-    }
-    else if (canvasState.mode === CanvasMode.Dragging) {
-      setCanvasState({mode: CanvasMode.Dragging,origin: null})
-    }
-    else if (canvasState.mode === CanvasMode.Pencil) {
-      insertPath();
-    }
-    else {
-      setCanvasState({mode: CanvasMode.None})
-    }
-    history.resume()
-  },[canvasState, setCanvasState, insertLayer, unselectLayer, history])
 
   const translateSelectedLayer = useMutation(({storage, self}, point: Point) => {
     if (canvasState.mode !== CanvasMode.Translating) return;
@@ -246,6 +222,9 @@ export default function Canvas() {
       startDrawing(point, e.pressure)
       return;
     }
+    if (canvasState.mode === CanvasMode.Inserting) return;
+
+    setCanvasState({origin: point, mode: CanvasMode.Pressing})
   },[canvasState.mode, setCanvasState, camera, startDrawing])
 
   const continueDrawing = useMutation(({self, setMyPresence}, point: Point, e: React.PointerEvent) => {
@@ -261,10 +240,35 @@ export default function Canvas() {
     })
   },[canvasState.mode])
 
-  const onPointerMove = useMutation(({}, e:React.PointerEvent) => {
+  const startMultiSelection = useCallback((current: Point, origin: Point) => {
+    if (Math.abs(current.x - origin.x) + Math.abs(current.y - origin.y) > 5) {
+      setCanvasState({mode: CanvasMode.SelectionNet, origin, current})
+    }
+  },[])
+
+  const updateSelectionNet = useMutation(({storage, setMyPresence}, current: Point, origin: Point) => {
+    if (layerIds) {
+      const layers = storage.get("layers").toImmutable()
+      setCanvasState({
+        mode: CanvasMode.SelectionNet,
+        origin,
+        current
+      })
+      const ids = findIntersectionLayersWithRectangle(layerIds, layers, origin, current)
+      setMyPresence({selection: ids})
+    }
+  },[layerIds])
+
+  const onPointerMove = useMutation(({setMyPresence}, e:React.PointerEvent) => {
     const point = pointerEventToCanvasPoint(e,camera)
 
-    if (canvasState.mode === CanvasMode.Dragging && canvasState.origin !== null) {
+    if (canvasState.mode === CanvasMode.Pressing) {
+      startMultiSelection(point, canvasState.origin)
+    }
+    else if (canvasState.mode === CanvasMode.SelectionNet) {
+      updateSelectionNet(point, canvasState.origin)
+    }
+    else if (canvasState.mode === CanvasMode.Dragging && canvasState.origin !== null) {
       const deltaX = e.movementX
       const deltaY = e.movementY
 
@@ -283,8 +287,41 @@ export default function Canvas() {
     else if (canvasState.mode === CanvasMode.Translating) {
       translateSelectedLayer(point);
     }
-    
-  },[canvasState, setCanvasState, insertLayer, continueDrawing, resizeSelectedLayer])
+    setMyPresence({cursor: point})
+  },[
+    camera,
+    canvasState,
+    translateSelectedLayer,
+    continueDrawing,
+    resizeSelectedLayer,
+    updateSelectionNet,
+    startMultiSelection,
+  ])
+
+  const onPointerUp = useMutation(({}, e:React.PointerEvent) => {
+    const point = pointerEventToCanvasPoint(e,camera)
+
+    if (canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Pressing) {
+      unselectLayer();
+      setCanvasState({mode: CanvasMode.None})
+    }
+    else if (canvasState.mode === CanvasMode.Inserting) {
+      insertLayer(
+        canvasState.layerType,
+        point
+      )
+    }
+    else if (canvasState.mode === CanvasMode.Dragging) {
+      setCanvasState({mode: CanvasMode.Dragging,origin: null})
+    }
+    else if (canvasState.mode === CanvasMode.Pencil) {
+      insertPath();
+    }
+    else {
+      setCanvasState({mode: CanvasMode.None})
+    }
+    history.resume()
+  },[canvasState, setCanvasState, insertLayer, unselectLayer, history])
 
   return (
     <div className="flex h-screen w-full">
@@ -307,6 +344,16 @@ export default function Canvas() {
               {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown}/>))}
 
               <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown}/>
+
+              {canvasState.mode === CanvasMode.SelectionNet && canvasState.current != null && (
+                <rect 
+                  x={Math.min(canvasState.origin.x, canvasState.current.x)}
+                  y={Math.min(canvasState.origin.y, canvasState.current.y)}
+                  width={Math.abs(canvasState.origin.x - canvasState.current.x)}
+                  height={Math.abs(canvasState.origin.y - canvasState.current.y)}
+                  className="fill-blue-600/5 stroke-blue-600 stroke-[0.5]"
+                />
+              )}
             </g>
             {
               pencilDraft !== null && 
