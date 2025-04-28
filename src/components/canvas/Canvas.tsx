@@ -1,15 +1,16 @@
 'use client';
 
-import { useCanRedo, useCanUndo, useHistory, useMutation, useMyPresence, useSelf, useStorage } from "@liveblocks/react";
+import { useCanRedo, useCanUndo, useHistory, useMutation, useSelf, useStorage } from "@liveblocks/react";
 import { colorToCss, findIntersectionLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
 import LayerComponent from "./LayerComponent";
 import { Camera, Layer, LayerType,Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH } from "~/types";
 import {nanoid} from 'nanoid'
 import { LiveObject } from "@liveblocks/client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import ToolsBar from "../toolsbar/ToolsBar";
 import Path from "./Path";
 import SelectionBox from "./SelectionBox";
+import useDeleteLayers from "~/hooks/useDeleteLayers";
 
 const MAX_LAYERS = 100;
 
@@ -22,11 +23,56 @@ export default function Canvas() {
 
   const [camera,setCamera] = useState<Camera>({x:0,y:0,zoom:1})
 
-  const history = useHistory();
+  const deleteLayers = useDeleteLayers();
 
+  const history = useHistory();
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
+  const selectAllLayers = useMutation(({setMyPresence}) => {
+    if (layerIds) {
+      setMyPresence({selection: [...layerIds]},{addToHistory: true})
+    }
+  },[layerIds])
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      const activeElement = document.activeElement;
+      const isInputField = activeElement && (
+        activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA"
+      )
+      if (isInputField) return;
+
+      const key = e.key.toLowerCase();
+
+      switch (key) {
+        case "backspace" :
+          deleteLayers();
+          break;
+        case "z" :
+          if (e.ctrlKey || e.metaKey) {
+            if (e.shiftKey) {
+              history.redo();
+            }
+            else {
+              history.undo();
+            }
+          }
+          break;
+        case "a" :
+          if (e.ctrlKey || e.metaKey) {
+            selectAllLayers()
+            break;
+          }
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  },[deleteLayers])
 
   const [canvasState, setCanvasState] = useState<CanvasState>({mode: CanvasMode.None})
 

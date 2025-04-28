@@ -35,7 +35,14 @@ export default function ToolsBar({
     <div className="fixed bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center rounded-lg bg-white p-1 shadow-[0_0_3px_rgba(0,0,0,0,18)]">
       <div className="flex justify-center items-center gap-3">
         <SelectionButton 
-          isActive={canvasState.mode === CanvasMode.None || canvasState.mode === CanvasMode.Dragging}
+          isActive={
+            canvasState.mode === CanvasMode.None ||
+            canvasState.mode === CanvasMode.Dragging ||
+            canvasState.mode === CanvasMode.Translating ||
+            canvasState.mode === CanvasMode.SelectionNet ||
+            canvasState.mode === CanvasMode.Resizing ||
+            canvasState.mode === CanvasMode.Pressing
+          }
           canvasMode={canvasState.mode} 
           onClick={(canvasMode) => setCanvasState(canvasMode === CanvasMode.Dragging ?
             {mode: canvasMode, origin: null} : {mode: canvasMode}
