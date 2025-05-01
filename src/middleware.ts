@@ -4,16 +4,14 @@ import { getToken } from "next-auth/jwt";
 export default async function middleware(req: NextRequest) {
   const session = await getToken({ req, secret: process.env.AUTH_SECRET });
 
-  // Not logged in -> redirect to /signin
   if (!session) {
     const newUrl = new URL('/signin', req.nextUrl.origin);
     return NextResponse.redirect(newUrl);
   }
 
   const url = req.nextUrl.pathname;
-  const userRole = session.role; // assuming role is included in the token
-
-  // Role-based access control
+  const userRole = session.role;
+  
   if (url.startsWith("/cus_dashboard") && userRole !== "CUSTOMER") {
     return NextResponse.redirect(new URL("/", req.nextUrl.origin));
   }
