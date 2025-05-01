@@ -68,14 +68,21 @@ export const authConfig = {
   },
   adapter: PrismaAdapter(db),
   callbacks: {
-    session: ({ session, token }) => {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as any).role; // `user` comes from DB
+      }
+      return token;
+    },
+    async session({ session, token }) {
       return {
         ...session,
         user: {
           ...session.user,
           id: token.sub,
+          role: token.role, // Include role in session
         },
       };
     },
-  },
+  } 
 } satisfies NextAuthConfig;
