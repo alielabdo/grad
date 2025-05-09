@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import {type NextAuthConfig, type DefaultSession} from "next-auth";
+import { type NextAuthConfig, type DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { signInSchema } from "~/schema";
 import bcrypt from "bcryptjs";
@@ -46,18 +46,14 @@ export const authConfig = {
             return null;
           }
 
-          const passwordMatch = await bcrypt.compare(
-            password,
-            user.password,
-          );
+          const passwordMatch = await bcrypt.compare(password, user.password);
 
           if (!passwordMatch) {
             return null;
           }
-          
+
           return user;
-        } 
-        catch (error) {
+        } catch (error) {
           return null;
         }
       },
@@ -70,7 +66,7 @@ export const authConfig = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as any).role; // `user` comes from DB
+        token.role = (user as any).role;
       }
       return token;
     },
@@ -80,9 +76,9 @@ export const authConfig = {
         user: {
           ...session.user,
           id: token.sub,
-          role: token.role, // Include role in session
+          role: token.role,
         },
       };
     },
-  } 
+  },
 } satisfies NextAuthConfig;
