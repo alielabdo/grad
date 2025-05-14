@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -56,6 +57,8 @@ model User {
   accounts      Account[]
   posts         Post[]
   sessions      Session[]
+  ownedRooms    Room[]    @relation("RoomOwner")
+  roomInvites   RoomInvite[]
 }
 
 model VerificationToken {
@@ -69,4 +72,21 @@ model VerificationToken {
 enum Role {
   CUSTOMER
   DESIGNER
+}
+
+model Room {
+  id            String    @id @default(cuid())
+  owner         User      @relation("RoomOwner", fields: [ownerId], references: [id])
+  ownerId       String
+  createdAt     DateTime  @default(now())
+  title         String    @default("Untitled")
+  roomInvites   RoomInvite[]
+}
+
+model RoomInvite {
+  id            String    @id @default(cuid())
+  room          Room      @relation(fields: [roomId], references: [id])
+  roomId        String
+  user          User      @relation(fields: [userId], references: [id])
+  userId        String
 }

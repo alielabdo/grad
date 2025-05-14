@@ -2,7 +2,7 @@
 
 import { useMutation, useOthers, useSelf, useStorage } from "@liveblocks/react";
 import Link from "next/link";
-import { colorToCss, hexToRgb } from "~/utils";
+import { colorToCss, connectionIdToColor, hexToRgb } from "~/utils";
 import { PiPathLight, PiSidebarSimpleThin } from 'react-icons/pi'
 import { Color, LayerType } from "~/types";
 import { IoEllipseOutline, IoSquareOutline } from "react-icons/io5";
@@ -13,6 +13,7 @@ import { BsCircleHalf } from "react-icons/bs";
 import { RiRoundedCorner } from "react-icons/ri";
 import ColorPicker from "./ColorPicker";
 import Dropdown from "./Dropdown";
+import UserAvatar from "./UserAvatar";
 
 export default function Sidebars({
   leftIsMinimized,
@@ -143,31 +144,52 @@ export default function Sidebars({
         </div>
       )
 
-        :
+      :
 
-        (
-          <div className="fixed left-3 top-3 h-[48px] w-[250px] justify-between items-center flex rounded-xl border bg-white p-4">
-            <Link href='/des_dashboard'>
-              <img
-                src='/home.svg'
-                alt="dashboard"
-                className="h-[18px] w-[18px]"
-              />
-            </Link>
-            <h2 className="scroll-m-20 text-[13px] font-medium">
-              Roomname
-            </h2>
-            <PiSidebarSimpleThin
-              className="w-5 h-5 cursor-pointer"
-              onClick={() => setLeftIsMinimized(false)}
+      (
+        <div className="fixed left-3 top-3 h-[48px] w-[250px] justify-between items-center flex rounded-xl border bg-white p-4">
+          <Link href='/des_dashboard'>
+            <img
+              src='/home.svg'
+              alt="dashboard"
+              className="h-[18px] w-[18px]"
             />
-          </div>
-        )}
+          </Link>
+          <h2 className="scroll-m-20 text-[13px] font-medium">
+            Roomname
+          </h2>
+          <PiSidebarSimpleThin
+            className="w-5 h-5 cursor-pointer"
+            onClick={() => setLeftIsMinimized(false)}
+          />
+        </div>
+      )}
 
       {/* Right Sidbar */}
       {!leftIsMinimized || layer ? (
-        <div className={`fixed ${leftIsMinimized && layer ? "bottom-3 right-3 top-3 rounded-xl" : ""} ${!leftIsMinimized && !layer ? "h-screen" : ""} ${!leftIsMinimized && layer ? "bottom-0 top-0 h-screen" : ""} right-0 w-[240px] flex flex-col border-l border-gray-200 bg-white`}>
-          <span>Users and Share here</span>
+        <div className={`fixed ${leftIsMinimized && layer ? "bottom-3 right-3 top-3 rounded-xl" : ""} ${!leftIsMinimized && !layer ? "h-screen" : ""} ${!leftIsMinimized && layer ? "bottom-0 top-0 h-screen" : ""} right-0 w-[240px] flex flex-col border-l border-gray-200 bg-white overflow-y-scroll`}>
+
+          <div className="flex items-center justify-between pr-2">
+            <div className="flex w-full max-w-36 gap-2 overflow-x-scroll p-3 text-xs">
+              {me && (
+                <UserAvatar
+                  color={connectionIdToColor(me.connectionId)}
+                  name={me.info.name}
+                />
+              )}
+
+              {others.map((other) => (
+                <UserAvatar
+                  key={other.connectionId}
+                  color={connectionIdToColor(other.connectionId)}
+                  name={other.info.name}
+                />
+              ))}
+
+            </div>
+            <p>Share Button</p>
+          </div>
+
           <div className="border-b border-gray-200" />
           {layer ? (
             <>
@@ -353,30 +375,46 @@ export default function Sidebars({
             </>
           )
 
-            :
+          :
 
-            (
-              <div className="flex flex-col gap-2 p-4">
-                <span className="mb-2 text-[11px] font-medium">
-                  Page
-                </span>
-                <ColorPicker
-                  value={roomColor ? colorToCss(roomColor) : "#1e1e1e"}
-                  onChange={(color) => {
-                    const rgbColor = hexToRgb(color);
-                    setRoomColor(rgbColor);
-                  }}
-                />
-              </div>
-            )}
+          (
+            <div className="flex flex-col gap-2 p-4">
+              <span className="mb-2 text-[11px] font-medium">
+                Page
+              </span>
+              <ColorPicker
+                value={roomColor ? colorToCss(roomColor) : "#1e1e1e"}
+                onChange={(color) => {
+                  const rgbColor = hexToRgb(color);
+                  setRoomColor(rgbColor);
+                }}
+              />
+            </div>
+          )}
         </div>
       )
 
         :
 
         (
-          <div>
+          <div className="fixed right-3 top-3 flex h-[48px] w-[250px] items-center justify-between rounded-xl border bg-white pr-2">
+            <div className="flex w-full max-w-36 gap-2 overflow-x-scroll p-3 text-xs">
+              {me && (
+                <UserAvatar
+                  color={connectionIdToColor(me.connectionId)}
+                  name={me.info.name}
+                />
+              )}
 
+              {others.map((other) => (
+                <UserAvatar
+                  key={other.connectionId}
+                  color={connectionIdToColor(other.connectionId)}
+                  name={other.info.name}
+                />
+              ))}
+            </div>
+            <p>Share Menu</p>
           </div>
         )}
     </>
