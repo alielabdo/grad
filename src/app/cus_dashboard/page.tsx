@@ -16,6 +16,7 @@ export default async function Page() {
           id: true,
           name: true,
           email: true,
+          role: true
         }
       },
       comments: {
@@ -24,7 +25,8 @@ export default async function Page() {
             select: {
               id: true,
               name: true,
-              email: true
+              email: true,
+              role: true
             }
           }
         }
@@ -45,7 +47,7 @@ export default async function Page() {
       {/* Main Content */}
       <div className="flex h-screen w-full flex-col">
         <div className="flex min-h-[50px] items-center border-b border-gray-200 bg-white pl-8">
-          <h2 className="text-[13px]">All Posts</h2>
+          <h2 className="text-[13px]">Homepage</h2>
         </div>
 
         <div className="flex h-full flex-col gap-10 p-8">

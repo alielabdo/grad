@@ -175,7 +175,7 @@ function SingleRoom({
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
           onBlur={handleBlur}
-          onKeyPress={handleKeyPress}
+          onKeyUp={handleKeyPress}
           autoFocus
           className="w-full"
         />
@@ -215,7 +215,7 @@ function ViewModeButton({
 }) {
   return (
     <button 
-      className={`select-none rounded-md p-1 px-2 text-[11px] hover:bg-gray-100 ${active ? "bg-slate-100" : ""}`}
+      className={`select-none rounded-md p-1 px-2 text-[11px] hover:bg-gray-100 ${active ? "bg-gray-100" : ""}`}
       onClick={onSelect}
     >
       {text}

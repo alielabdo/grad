@@ -40,8 +40,14 @@ export async function deletePost(id: number) {
     },
   });
 
+  await db.comment.deleteMany({
+    where: {
+      postId: id
+    }
+  });
+
   await db.post.delete({
-    where: { id },
+    where: { id }
   });
 
   revalidatePath("/cus_dashboard");
