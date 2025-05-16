@@ -31,7 +31,7 @@ export default function UserMenu({email} : {email:string | null}) {
       >
         <UserAvatar name={email ?? "Anonymous"} />
 
-        <h2 className="scroll-m-20 text-[13px] font-medium">
+        <h2 className="scroll-m-20 text-[13px] font-medium select-none">
           {email}
         </h2>
 

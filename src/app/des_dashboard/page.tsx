@@ -6,7 +6,6 @@ import UserMenu from "~/components/ddashboard/UserMenu";
 import CreateRoom from "~/components/ddashboard/CreateRoom";
 import RoomsView from "~/components/ddashboard/RoomsView";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function Page() {
 
@@ -34,13 +33,13 @@ export default async function Page() {
         <nav className="mt-4 space-y-1">
           <Link
             href="/des_dashboard"
-            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 bg-gray-100"
+            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 bg-gray-100 select-none"
           >
             Dashboard
           </Link>
           <Link
             href="/des_dashboard/posts"
-            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100"
+            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 select-none"
           >
             View Posts
           </Link>
@@ -49,7 +48,7 @@ export default async function Page() {
 
       <div className="flex h-screen w-full flex-col">
         <div className="flex min-h-[50px] items-center border-b border-gray-200 bg-white pl-8">
-          <h2 className="text-[13px]">Recents</h2>
+          <h2 className="text-[13px] select-none">Recents</h2>
         </div>
 
         <div className="flex h-full flex-col gap-10 p-8">
