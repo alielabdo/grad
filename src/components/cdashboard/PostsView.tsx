@@ -50,6 +50,11 @@ export default function PostsView({ posts, userId }: { posts: any[], userId: str
             )}
           </div>
           <p className="mt-2 text-gray-600">{post.content}</p>
+
+          <div className="mt-2 text-sm text-gray-500">
+            Posted by: {post.createdBy.email}
+          </div>
+
           <div className="mt-4 border-t pt-4">
             <h4 className="mb-2 text-sm font-medium">Comments</h4>
             {post.comments.map((comment: any) => (
