@@ -5,6 +5,7 @@ import { db } from "~/server/db";
 import UserMenu from "~/components/cdashboard/UserMenu";
 import CreatePost from "~/components/cdashboard/CreatePost";
 import PostsView from "~/components/cdashboard/PostsView";
+import Link from "next/link";
 
 export default async function Page() {
   const session = await auth();
@@ -42,6 +43,21 @@ export default async function Page() {
       {/* Left Sidebar */}
       <div className="flex h-screen min-w-[264px] flex-col border-r border-gray-200 bg-white p-2">
         <UserMenu email={session?.user.email ?? ""} />
+
+        <div className="mt-4 space-y-1">
+          <Link
+            href="/cus_dashboard"
+            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 bg-gray-100 select-none"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/cus_dashboard/rooms"
+            className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-gray-100 select-none"
+          >
+            View Shared Rooms
+          </Link>
+        </div>
       </div>
 
       {/* Main Content */}

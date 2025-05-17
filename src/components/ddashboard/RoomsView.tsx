@@ -20,11 +20,13 @@ const PASTEL_COLORS = [
 
 export default function RoomsView({
   ownedRooms,
-  roomInvites
+  roomInvites,
+  disabled
 } :
 {
   ownedRooms: Room[],
-  roomInvites: Room[]
+  roomInvites: Room[],
+  disabled?: boolean
 }) {
 
   const [viewMode, setViewMode] = useState("owns");
@@ -35,6 +37,10 @@ export default function RoomsView({
   const outerDivRef = useRef<HTMLDivElement>(null);
 
   const filteredRooms = useMemo(() => {
+    if (disabled) {
+      return roomInvites;
+    }
+
     if (viewMode === "owns") {
       return ownedRooms;
     }
@@ -65,19 +71,21 @@ export default function RoomsView({
 
   return (
     <div className="flex flex-col gap-5" ref={outerDivRef}>
-      <div className="flex gap-1">
-        <ViewModeButton 
-          onSelect={() => setViewMode("owns")} 
-          active={viewMode === "owns"} 
-          text="My Projects"
-        />
+      {!disabled && (
+        <div className="flex gap-1">
+          <ViewModeButton 
+            onSelect={() => setViewMode("owns")} 
+            active={viewMode === "owns"} 
+            text="My Projects"
+          />
 
-        <ViewModeButton
-          onSelect={() => setViewMode("shared")}
-          active={viewMode === "shared"}
-          text="Shared Files"
-        />
-      </div>
+          <ViewModeButton
+            onSelect={() => setViewMode("shared")}
+            active={viewMode === "shared"}
+            text="Shared Files"
+          />
+        </div>
+      )}
 
       <div className="flex flex-wrap gap-4">
         {filteredRooms.map((room) => {
@@ -92,7 +100,15 @@ export default function RoomsView({
                 color={roomColor}
                 selected={selected === room.id}
                 select={() => setSelected(room.id)}
-                navigateTo={() => router.push("/des_dashboard/" + room.id)}
+                navigateTo={() => {
+                  if (disabled) {
+                    router.push("/cus_dashboard/" + room.id)
+                  }
+                  else {
+                    router.push("/des_dashboard/" + room.id)
+                  }
+                  
+                }}
                 canEdit={viewMode === "owns"}
               />
             </React.Fragment>

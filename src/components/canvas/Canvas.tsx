@@ -15,17 +15,20 @@ import SelectionTools from "./SelectionTools";
 import Sidebars from "../sidebars/Sidebars";
 import MultiplayerGuides from "./MultiplayerGuides";
 import { User } from "@prisma/client";
+import Link from "next/link";
 
 const MAX_LAYERS = 100;
 
 export default function Canvas({
   roomName,
   roomId,
-  othersWithAccessToRoom
+  othersWithAccessToRoom,
+  disabled
 } : {
   roomName: string,
   roomId: string,
-  othersWithAccessToRoom: User[]
+  othersWithAccessToRoom: User[],
+  disabled?: boolean
 }) {
 
   const roomColor = useStorage((root) => root.roomColor)
@@ -397,7 +400,24 @@ export default function Canvas({
   }, [canvasState, setCanvasState, insertLayer, unselectLayer, history])
 
   return (
-    <div className="flex h-screen w-full">
+    <div className={`flex h-screen w-full relative ${disabled ? 'pointer-events-none' : ''}`}>
+
+      {disabled && (
+        <div className="bg-gray-600 bg-opacity-30 z-[90] inset-0 fixed">
+          <div className="z-10 fixed rounded-xl border bg-white p-1 bottom-10 left-1/2 flex gap-2 -translate-x-1/2 pointer-events-auto">
+            <Link href='/cus_dashboard'>
+              <img
+                src='/home.svg'
+                alt="dashboard"
+                className="h-[18px] w-[18px] hover:opacity-70 transition-opacity"
+              />
+            </Link>
+
+            <p className="text-[11px]">You are a customer and cannot commit changes</p>
+          </div>
+        </div>
+      )}
+
       <main className="fixed left-0 right-0 h-screen overflow-y-auto">
         <div
           style={{ backgroundColor: roomColor ? colorToCss(roomColor) : "#1E1E1E" }}
@@ -452,30 +472,35 @@ export default function Canvas({
         </div>
       </main>
 
-      <ToolsBar
-        canvasState={canvasState}
-        setCanvasState={(newState) => setCanvasState(newState)}
-        zoomIn={() => {
-          setCamera((camera) => ({ ...camera, zoom: camera.zoom + 0.1 }))
-        }}
-        zoomOut={() => {
-          setCamera((camera) => ({ ...camera, zoom: camera.zoom - 0.1 }))
-        }}
-        canZoomIn={camera.zoom < 2}
-        canZoomOut={camera.zoom > 0.5}
-        undo={() => history.undo()}
-        redo={() => history.redo()}
-        canRedo={canRedo}
-        canUndo={canUndo}
-      />
+      {!disabled && (
+        <ToolsBar
+          canvasState={canvasState}
+          setCanvasState={(newState) => setCanvasState(newState)}
+          zoomIn={() => {
+            setCamera((camera) => ({ ...camera, zoom: camera.zoom + 0.1 }))
+          }}
+          zoomOut={() => {
+            setCamera((camera) => ({ ...camera, zoom: camera.zoom - 0.1 }))
+          }}
+          canZoomIn={camera.zoom < 2}
+          canZoomOut={camera.zoom > 0.5}
+          undo={() => history.undo()}
+          redo={() => history.redo()}
+          canRedo={canRedo}
+          canUndo={canUndo}
+        />
+      )}
 
+      
       <Sidebars
         leftIsMinimized={leftIsMinimized}
         setLeftIsMinimized={setLeftIsMinimized}
         roomName={roomName}
         roomId={roomId}
         othersWithAccessToRoom={othersWithAccessToRoom}
+        disabled={disabled}
       />
+      
     </div>
   )
 }

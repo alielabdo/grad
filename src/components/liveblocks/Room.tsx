@@ -27,9 +27,8 @@ export function Room({children, roomId} : {children: ReactNode, roomId: string})
           fallback={
             <div 
             className="flex items-center justify-center h-screen flex-col gap-2">
-              <img className="h-[50px] w-[50px] animate-bounce" src="loading..." alt="/loading-com.svg" />
               <h1 className="text-sm font-normal">
-                Loading
+                Loading...
               </h1>
             </div>
           }>
