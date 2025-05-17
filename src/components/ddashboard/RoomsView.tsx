@@ -93,6 +93,7 @@ export default function RoomsView({
                 selected={selected === room.id}
                 select={() => setSelected(room.id)}
                 navigateTo={() => router.push("/des_dashboard/" + room.id)}
+                canEdit={viewMode === "owns"}
               />
             </React.Fragment>
           )
@@ -109,7 +110,8 @@ function SingleRoom({
   color, 
   selected, 
   select, 
-  navigateTo
+  navigateTo,
+  canEdit
 } : 
 {
   id: string,
@@ -118,7 +120,8 @@ function SingleRoom({
   color: string,
   selected: boolean,
   select: () => void,
-  navigateTo: () => void
+  navigateTo: () => void,
+  canEdit: boolean
 }) {
 
   const [isEditing, setIsEditing] = useState(false);
@@ -169,7 +172,7 @@ function SingleRoom({
         </p>
       </div>
 
-      {isEditing ? (
+      {isEditing && canEdit ? (
         <input 
           type="text"
           value={editedTitle}

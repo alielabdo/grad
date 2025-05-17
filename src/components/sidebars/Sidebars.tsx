@@ -14,13 +14,21 @@ import { RiRoundedCorner } from "react-icons/ri";
 import ColorPicker from "./ColorPicker";
 import Dropdown from "./Dropdown";
 import UserAvatar from "./UserAvatar";
+import { User } from "@prisma/client";
+import ShareMenu from "./ShareMenu";
 
 export default function Sidebars({
   leftIsMinimized,
-  setLeftIsMinimized
+  setLeftIsMinimized,
+  roomName,
+  roomId,
+  othersWithAccessToRoom
 }: {
   leftIsMinimized: boolean,
-  setLeftIsMinimized: (value: boolean) => void
+  setLeftIsMinimized: (value: boolean) => void,
+  roomName: string,
+  roomId: string,
+  othersWithAccessToRoom: User[]
 }) {
   const me = useSelf();
   const others = useOthers();
@@ -113,7 +121,7 @@ export default function Sidebars({
             </div>
 
             <h2 className="mt-2 scroll-m-20 text-[13px] font-medium">
-              Roomname
+              {roomName}
             </h2>
           </div>
 
@@ -156,7 +164,7 @@ export default function Sidebars({
             />
           </Link>
           <h2 className="scroll-m-20 text-[13px] font-medium">
-            Roomname
+            {roomName}
           </h2>
           <PiSidebarSimpleThin
             className="w-5 h-5 cursor-pointer"
@@ -187,7 +195,10 @@ export default function Sidebars({
               ))}
 
             </div>
-            <p>Share Button</p>
+            <ShareMenu 
+              roomId={roomId} 
+              othersWithAccessToRoom={othersWithAccessToRoom}
+            />
           </div>
 
           <div className="border-b border-gray-200" />
@@ -394,29 +405,32 @@ export default function Sidebars({
         </div>
       )
 
-        :
+      :
 
-        (
-          <div className="fixed right-3 top-3 flex h-[48px] w-[250px] items-center justify-between rounded-xl border bg-white pr-2">
-            <div className="flex w-full max-w-36 gap-2 overflow-x-scroll p-3 text-xs">
-              {me && (
-                <UserAvatar
-                  color={connectionIdToColor(me.connectionId)}
-                  name={me.info.name}
-                />
-              )}
+      (
+        <div className="fixed right-3 top-3 flex h-[48px] w-[250px] items-center justify-between rounded-xl border bg-white pr-2">
+          <div className="flex w-full max-w-36 gap-2 overflow-x-scroll p-3 text-xs">
+            {me && (
+              <UserAvatar
+                color={connectionIdToColor(me.connectionId)}
+                name={me.info.name}
+              />
+            )}
 
-              {others.map((other) => (
-                <UserAvatar
-                  key={other.connectionId}
-                  color={connectionIdToColor(other.connectionId)}
-                  name={other.info.name}
-                />
-              ))}
-            </div>
-            <p>Share Menu</p>
+            {others.map((other) => (
+              <UserAvatar
+                key={other.connectionId}
+                color={connectionIdToColor(other.connectionId)}
+                name={other.info.name}
+              />
+            ))}
           </div>
-        )}
+          <ShareMenu
+            roomId={roomId}
+            othersWithAccessToRoom={othersWithAccessToRoom}
+          />
+        </div>
+      )}
     </>
   )
 }
