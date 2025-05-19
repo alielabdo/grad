@@ -107,7 +107,10 @@ export default function Sidebars({
     }
   }, [selectedLayer])
 
-  // Export Pdf
+  // Export Pdf Captures the SVG canvas using html2canvas Creates a PDF using jsPDF Saves the PDF with the room name or "canvas" as the filename
+  
+  // Direct Canvas Capture specifically targets just the canvas content by Cloning only the canvas container Removing UI elements before capture
+
   const handleExportToPDF = async () => {
     try {
       // Get the main canvas container
