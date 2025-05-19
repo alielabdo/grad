@@ -16,6 +16,9 @@ import Dropdown from "./Dropdown";
 import UserAvatar from "./UserAvatar";
 import { User } from "@prisma/client";
 import ShareMenu from "./ShareMenu";
+import { FaFilePdf } from "react-icons/fa";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 export default function Sidebars({
   leftIsMinimized,
@@ -104,6 +107,59 @@ export default function Sidebars({
     }
   }, [selectedLayer])
 
+  // Export Pdf
+  const handleExportToPDF = async () => {
+    try {
+      // Get the main canvas container
+      const canvasContainer = document.querySelector('main > div') as HTMLElement;
+      if (!canvasContainer) return;
+
+      // Create a clone of the canvas container to avoid affecting the UI
+      const clone = canvasContainer.cloneNode(true) as HTMLElement;
+      clone.style.position = 'fixed';
+      clone.style.left = '-9999px';
+      clone.style.top = '0';
+      clone.style.width = `${canvasContainer.offsetWidth}px`;
+      clone.style.height = `${canvasContainer.offsetHeight}px`;
+      clone.style.backgroundColor = roomColor ? colorToCss(roomColor) : "#1E1E1E";
+
+      // Remove any elements we don't want in the export
+      const selectionTools = clone.querySelector('.selection-tools');
+      if (selectionTools) selectionTools.remove();
+
+      document.body.appendChild(clone);
+
+      // Use html2canvas with specific options
+      const canvas = await html2canvas(clone, {
+        backgroundColor: null,
+        scale: 2, // Higher quality
+        logging: false,
+        useCORS: true,
+        ignoreElements: (element) => {
+          // Ignore any remaining UI elements
+          return element.classList.contains('selection-tools') ||
+            element.classList.contains('sidebar') ||
+            element.classList.contains('tools-bar');
+        }
+      });
+
+      // Remove the clone
+      document.body.removeChild(clone);
+
+      // Create PDF
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`${roomName || 'canvas'}.pdf`);
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+    }
+  };
+
   return (
     <>
       {/* Left Sidbar */}
@@ -179,7 +235,6 @@ export default function Sidebars({
 
       {/* Right Sidbar */}
       {disabled ? (
-        // Minimized right sidebar for disabled state
         <div className="fixed right-3 top-3 flex h-[48px] items-center rounded-xl border bg-white px-3">
           <div className="flex gap-2 overflow-x-scroll text-xs">
             {me && (
@@ -220,10 +275,20 @@ export default function Sidebars({
 
             </div>
             {!disabled && (
-              <ShareMenu
-                roomId={roomId}
-                othersWithAccessToRoom={othersWithAccessToRoom}
-              />
+              <div className="flex gap-2">
+                <ShareMenu
+                  roomId={roomId}
+                  othersWithAccessToRoom={othersWithAccessToRoom}
+                />
+
+                <button
+                  onClick={handleExportToPDF}
+                  className="p-2 rounded hover:bg-gray-100"
+                  title="Export to PDF"
+                >
+                  <FaFilePdf className="w-4 h-4 text-red-600" />
+                </button>
+              </div>
             )}
           </div>
 
@@ -452,10 +517,20 @@ export default function Sidebars({
             ))}
           </div>
           {!disabled && (
-            <ShareMenu
-              roomId={roomId}
-              othersWithAccessToRoom={othersWithAccessToRoom}
-            />
+            <div className="flex gap-2">
+              <ShareMenu
+                roomId={roomId}
+                othersWithAccessToRoom={othersWithAccessToRoom}
+              />
+              
+              <button
+                onClick={handleExportToPDF}
+                className="p-2 rounded hover:bg-gray-100"
+                title="Export to PDF"
+              >
+                <FaFilePdf className="w-4 h-4 text-red-600" />
+              </button>
+            </div>
           )}
         </div>
       ))}

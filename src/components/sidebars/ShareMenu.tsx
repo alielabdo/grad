@@ -89,7 +89,7 @@ export default function ShareMenu({
 
                     <div className="flex items-center space-x-1">
                       <span className="text-[11px] text-gray-500">
-                        Full Access
+                        {user.role === "DESIGNER" ? "FULL ACCESS" : "READ ACCESS"}
                       </span>
 
                       <IoClose 

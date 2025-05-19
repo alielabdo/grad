@@ -420,6 +420,7 @@ export default function Canvas({
 
       <main className="fixed left-0 right-0 h-screen overflow-y-auto">
         <div
+          id="canvas-container"
           style={{ backgroundColor: roomColor ? colorToCss(roomColor) : "#1E1E1E" }}
           className="h-full w-full touch-none"
         >
@@ -428,6 +429,7 @@ export default function Canvas({
             canvasMode={canvasState.mode} setCanvasState={() => setCanvasState({ mode: CanvasMode.None })}
           />
           <svg
+            id="canvas-svg"
             onWheel={onWheel}
             onPointerUp={onPointerUp} className="w-full h-full"
             onPointerDown={onPointerDown}

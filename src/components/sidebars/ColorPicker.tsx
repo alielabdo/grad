@@ -76,16 +76,16 @@ const ColorPicker = ({
         className="absolute left-1.5 top-[50%] h-3.5 w-3.5 -translate-y-1/2 cursor-pointer rounded"
         onClick={() => setIsPickerOpen(!isPickerOpen)}
         style={{ backgroundColor: inputValue }}
-      >
-        {isPickerOpen && (
-          <div className="absolute right-0 z-10 mt-2 -translate-x-[125px]">
-            <HexColorPicker
-              color={inputValue}
-              onChange={handleColorChange}
-            />
-          </div>
-        )}
-      </div>
+      />
+
+      {isPickerOpen && (
+        <div className="absolute right-0 z-20 mt-2 translate-x-[85px]">
+          <HexColorPicker
+            color={inputValue}
+            onChange={handleColorChange}
+          />
+        </div>
+      )}
     </div>
   )
 }
