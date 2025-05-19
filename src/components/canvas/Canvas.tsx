@@ -426,7 +426,8 @@ export default function Canvas({
         >
           <SelectionTools
             camera={camera}
-            canvasMode={canvasState.mode} setCanvasState={() => setCanvasState({ mode: CanvasMode.None })}
+            canvasMode={canvasState.mode} 
+            setCanvasState={() => setCanvasState({ mode: CanvasMode.None })}
           />
           <svg
             id="canvas-svg"
