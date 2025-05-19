@@ -5,6 +5,7 @@ import Rectangle from "./Rectangle";
 import Ellipse from './Ellipse';
 import Text from "./Text";
 import Path from "./Path";
+import Image from "./Image";
 import { colorToCss } from "~/utils";
 
 const LayerComponent = memo(({
@@ -37,6 +38,8 @@ const LayerComponent = memo(({
           opacity={layer.opacity}
         />
       )
+    case LayerType.Image:
+      return <Image id={id} layer={layer} onPointerDown={onLayerPointerDown} />;
     default :
       return null;
   }

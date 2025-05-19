@@ -3,7 +3,7 @@
 import { useCanRedo, useCanUndo, useHistory, useMutation, useSelf, useStorage } from "@liveblocks/react";
 import { colorToCss, findIntersectionLayersWithRectangle, penPointsToPathLayer, pointerEventToCanvasPoint, resizeBounds } from "~/utils";
 import LayerComponent from "./LayerComponent";
-import { Camera, Layer, LayerType, Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH } from "~/types";
+import { Camera, Layer, LayerType, Point, RectangleLayer, EllipseLayer, CanvasState, CanvasMode, TextLayer, Side, XYWH, ImageLayer } from "~/types";
 import { nanoid } from 'nanoid'
 import { LiveObject } from "@liveblocks/client";
 import React, { useCallback, useEffect, useState } from "react";
@@ -130,8 +130,9 @@ export default function Canvas({
   const insertLayer = useMutation(
     (
       { storage, setMyPresence },
-      layerType: LayerType.Ellipse | LayerType.Rectangle | LayerType.Text,
-      position: Point
+      layerType: LayerType.Ellipse | LayerType.Rectangle | LayerType.Text | LayerType.Image,
+      position: Point,
+      src?: string
     ) => {
       const liveLayers = storage.get("layers");
       if (liveLayers.size >= MAX_LAYERS) {
@@ -180,6 +181,17 @@ export default function Canvas({
           stroke: { r: 217, g: 217, b: 217 },
           opacity: 100,
         })
+      }
+      else if (layerType === LayerType.Image && src) {
+        layer = new LiveObject<ImageLayer>({
+          type: LayerType.Image,
+          x: position.x,
+          y: position.y,
+          height: 200,
+          width: 200,
+          src,
+          opacity: 100,
+        });
       }
 
       if (layer) {
@@ -382,10 +394,11 @@ export default function Canvas({
       setCanvasState({ mode: CanvasMode.None })
     }
     else if (canvasState.mode === CanvasMode.Inserting) {
-      insertLayer(
-        canvasState.layerType,
-        point
-      )
+      if (canvasState.layerType === LayerType.Image && 'src' in canvasState) {
+        insertLayer(LayerType.Image, point, canvasState.src);
+      } else {
+        insertLayer(canvasState.layerType, point);
+      }
     }
     else if (canvasState.mode === CanvasMode.Dragging) {
       setCanvasState({ mode: CanvasMode.Dragging, origin: null })
@@ -429,6 +442,11 @@ export default function Canvas({
             canvasMode={canvasState.mode} 
             setCanvasState={() => setCanvasState({ mode: CanvasMode.None })}
           />
+
+          {/* Scalable Vector Graphics */}
+          {/* They scale perfectly to any size without pixelation */}
+          {/* Supports animation and user interaction */}
+          {/* Uses mathematical formulas to define shapes (lines, curves, etc.) */}
           <svg
             id="canvas-svg"
             onWheel={onWheel}
@@ -502,6 +520,7 @@ export default function Canvas({
         roomId={roomId}
         othersWithAccessToRoom={othersWithAccessToRoom}
         disabled={disabled}
+        setCanvasState={setCanvasState}
       />
       
     </div>

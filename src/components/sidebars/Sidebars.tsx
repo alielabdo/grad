@@ -4,7 +4,7 @@ import { useMutation, useOthers, useSelf, useStorage } from "@liveblocks/react";
 import Link from "next/link";
 import { colorToCss, connectionIdToColor, hexToRgb } from "~/utils";
 import { PiPathLight, PiSidebarSimpleThin } from 'react-icons/pi'
-import { Color, LayerType } from "~/types";
+import { CanvasMode, CanvasState, Color, LayerType } from "~/types";
 import { IoEllipseOutline, IoSquareOutline } from "react-icons/io5";
 import { AiOutlineFontSize } from "react-icons/ai";
 import LayerButton from "./LayerButton";
@@ -19,6 +19,8 @@ import ShareMenu from "./ShareMenu";
 import { FaFilePdf } from "react-icons/fa";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { useRef, useCallback } from "react";
+import { ImageIcon } from "lucide-react";
 
 export default function Sidebars({
   leftIsMinimized,
@@ -27,6 +29,7 @@ export default function Sidebars({
   roomId,
   othersWithAccessToRoom,
   disabled,
+  setCanvasState
 }: {
   leftIsMinimized: boolean,
   setLeftIsMinimized: (value: boolean) => void,
@@ -34,6 +37,7 @@ export default function Sidebars({
   roomId: string,
   othersWithAccessToRoom: User[],
   disabled?: boolean
+  setCanvasState: (state: CanvasState) => void
 }) {
   const me = useSelf();
   const others = useOthers();
@@ -162,6 +166,26 @@ export default function Sidebars({
       console.error('Error exporting to PDF:', error);
     }
   };
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const src = event.target?.result as string;
+      if (src) {
+        setCanvasState({
+          mode: CanvasMode.Inserting,
+          layerType: LayerType.Image,
+          src
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  }, [setCanvasState]);
 
   return (
     <>
@@ -403,31 +427,35 @@ export default function Sidebars({
                 </div>
               </div>
 
-              <div className="border-b border-gray-200" />
-              <div className="flex flex-col gap-2 p-4">
-                <span className="mb-2 text-[11px] font-medium">
-                  Fill
-                </span>
-                <ColorPicker
-                  value={colorToCss(layer.fill)}
-                  onChange={(color) => {
-                    updateLayer({ fill: color, stroke: color })
-                  }}
-                />
-              </div>
+              {layer.type !== LayerType.Image && (
+                <div className="flex w-full">
+                  <div className="border-b border-gray-200" />
+                  <div className="flex flex-col gap-2 p-4">
+                    <span className="mb-2 text-[11px] font-medium">
+                      Fill
+                    </span>
+                    <ColorPicker
+                      value={colorToCss(layer.fill)}
+                      onChange={(color) => {
+                        updateLayer({ fill: color, stroke: color })
+                      }}
+                    />
+                  </div>
 
-              <div className="border-b border-gray-200" />
-              <div className="flex flex-col gap-2 p-4">
-                <span className="mb-2 text-[11px] font-medium">
-                  Stroke
-                </span>
-                <ColorPicker
-                  value={colorToCss(layer.stroke)}
-                  onChange={(color) => {
-                    updateLayer({ stroke: color })
-                  }}
-                />
-              </div>
+                  <div className="border-b border-gray-200" />
+                  <div className="flex flex-col gap-2 p-4">
+                    <span className="mb-2 text-[11px] font-medium">
+                      Stroke
+                    </span>
+                    <ColorPicker
+                      value={colorToCss(layer.stroke)}
+                      onChange={(color) => {
+                        updateLayer({ stroke: color })
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {layer.type === LayerType.Text && (
                 <>
@@ -484,16 +512,36 @@ export default function Sidebars({
 
           (
             <div className="flex flex-col gap-2 p-4">
-              <span className="mb-2 text-[11px] font-medium">
-                Page
-              </span>
-              <ColorPicker
-                value={roomColor ? colorToCss(roomColor) : "#1e1e1e"}
-                onChange={(color) => {
-                  const rgbColor = hexToRgb(color);
-                  setRoomColor(rgbColor);
-                }}
-              />
+              <div className="flex flex-col gap-2">
+                <span className="mb-2 text-[11px] font-medium">
+                  Page
+                </span>
+                <ColorPicker
+                  value={roomColor ? colorToCss(roomColor) : "#1e1e1e"}
+                  onChange={(color) => {
+                    const rgbColor = hexToRgb(color);
+                    setRoomColor(rgbColor);
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="text-[11px] font-medium">Import</span>
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-2 text-xs p-2 rounded hover:bg-gray-100 border"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  <span>Image</span>
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+              </div>
             </div>
           )}
         </div>

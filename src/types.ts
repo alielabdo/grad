@@ -15,6 +15,7 @@ export enum LayerType {
   Ellipse,
   Path,
   Text,
+  Image
 }
 
 export type RectangleLayer = {
@@ -67,7 +68,17 @@ export type TextLayer = {
   opacity: number,
 }
 
-export type Layer = RectangleLayer | EllipseLayer | PathLayer | TextLayer;
+export type ImageLayer = {
+  type: LayerType.Image;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  src: string;
+  opacity: number;
+};
+
+export type Layer = RectangleLayer | EllipseLayer | PathLayer | TextLayer | ImageLayer;
 
 export type Point = {
   x: number,
@@ -81,7 +92,8 @@ export type CanvasState = {
   origin: Point | null
 } | {
   mode: CanvasMode.Inserting
-  layerType: LayerType.Rectangle | LayerType.Ellipse | LayerType.Text
+  layerType: LayerType.Rectangle | LayerType.Ellipse | LayerType.Text | LayerType.Image
+  src?: string
 } | {
   mode: CanvasMode.Pencil
 } | {
