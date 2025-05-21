@@ -188,7 +188,7 @@ function SingleRoom({
         </p>
       </div>
 
-      {isEditing && canEdit ? (
+      {isEditing && canEdit && !disabled ? (
         <input 
           type="text"
           value={editedTitle}
