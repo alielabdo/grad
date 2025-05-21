@@ -55,7 +55,7 @@ export default async function Page() {
           <CreateRoom />
           <RoomsView 
             ownedRooms={user.ownedRooms}
-            roomInvites={user.roomInvites.map((room) => room.room)}
+            roomInvites={user.roomInvites.map((invite) => invite.room)}
           />
         </div>
       </div>
