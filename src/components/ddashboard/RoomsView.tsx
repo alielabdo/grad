@@ -109,7 +109,7 @@ export default function RoomsView({
                   }
                   
                 }}
-                canEdit={viewMode === "owns"}
+                canEdit={viewMode === "owns" && !disabled}
               />
             </React.Fragment>
           )
@@ -188,7 +188,7 @@ function SingleRoom({
         </p>
       </div>
 
-      {isEditing && canEdit && !disabled ? (
+      {isEditing && canEdit ? (
         <input 
           type="text"
           value={editedTitle}
