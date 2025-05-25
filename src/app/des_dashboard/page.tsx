@@ -48,7 +48,7 @@ export default async function Page() {
 
       <div className="flex h-screen w-full flex-col">
         <div className="flex min-h-[50px] items-center border-b border-gray-200 bg-white pl-8">
-          <h2 className="text-[13px] select-none">Recents</h2>
+          <h2 className="text-[13px] select-none">Designer Dashboard</h2>
         </div>
 
         <div className="flex h-full flex-col gap-10 p-8">
