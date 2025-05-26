@@ -57,7 +57,8 @@ export default function Sidebars({
 
   const layers = useStorage((root) => root.layers);
   const layerIds = useStorage((root) => root.layerIds);
-  const reversedLayerIds = [...layerIds ?? []].reverse()
+
+  // const reversedLayerIds = [...layerIds ?? []].reverse()
 
   const selection = useSelf((me) => me.presence.selection);
 
@@ -192,7 +193,7 @@ export default function Sidebars({
       {/* Left Sidbar */}
       {!disabled && (
         !leftIsMinimized ? (
-          <div className="fixed left-0 flex h-screen w-[240px] flex-col border-r border-gray-200 bg-white">
+          <div className="fixed left-0 flex h-screen w-[240px] flex-col border-r border-gray-200 bg-white overflow-y-scroll">
             <div className="p-4">
               <div className="flex justify-between">
                 <Link href='/des_dashboard'>
@@ -216,7 +217,7 @@ export default function Sidebars({
               <span className="mb-2 text-[11px] font-medium">
                 Layers
               </span>
-              {layerIds && reversedLayerIds.map((id) => {
+              {layerIds && layerIds.map((id) => {
                 const layer = layers?.get(id);
                 const isSelected = selection?.includes(id);
                 if (layer?.type === LayerType.Rectangle) {
@@ -443,7 +444,7 @@ export default function Sidebars({
                   </div>
 
                   <div className="border-b border-gray-200" />
-                  <div className="flex flex-col gap-2 p-4">
+                  <div className="flex flex-col gap-2 p-4 -translate-x-[30px]">
                     <span className="mb-2 text-[11px] font-medium">
                       Stroke
                     </span>
@@ -452,6 +453,7 @@ export default function Sidebars({
                       onChange={(color) => {
                         updateLayer({ stroke: color })
                       }}
+                      type="stroke"
                     />
                   </div>
                 </div>

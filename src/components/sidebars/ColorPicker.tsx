@@ -4,11 +4,13 @@ import { HexColorPicker } from 'react-colorful'
 const ColorPicker = ({
   value,
   onChange,
-  className
+  className,
+  type
 }: {
   value: string,
   onChange: (value: string) => void,
-  className?: string
+  className?: string,
+  type?: string
 }) => {
 
   const [inputValue, setInputValue] = useState(value);
@@ -79,7 +81,7 @@ const ColorPicker = ({
       />
 
       {isPickerOpen && (
-        <div className="absolute right-0 z-20 mt-2 translate-x-[85px]">
+        <div className={`fixed z-20 mt-2 ${type === "stroke" ? "right-[39px]" : "right-5"}`}>
           <HexColorPicker
             color={inputValue}
             onChange={handleColorChange}
