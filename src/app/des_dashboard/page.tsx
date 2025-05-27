@@ -51,7 +51,7 @@ export default async function Page() {
           <h2 className="text-[13px] select-none">Designer Dashboard</h2>
         </div>
 
-        <div className="flex h-full flex-col gap-10 p-8">
+        <div className="flex h-full flex-col gap-10 p-8 overflow-y-scroll">
           <CreateRoom />
           <RoomsView 
             ownedRooms={user.ownedRooms}

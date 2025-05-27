@@ -63,7 +63,7 @@ export default async function Page() {
           <h2 className="text-[13px]">All Posts</h2>
         </div>
 
-        <div className="flex h-full flex-col gap-10 p-8">
+        <div className="flex h-full flex-col gap-10 p-8 overflow-y-scroll">
           <PostsView
             posts={allPosts}
             userId={session?.user.id ?? ""}
