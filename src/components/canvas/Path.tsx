@@ -28,7 +28,7 @@ export default function Path({
   }))
   
   return (
-    <g className='group'>
+    <g className='group hover:cursor-move'>
       <path
         style={{transform: `translate(${x}px, ${y}px)`}}
         d={pathData} 

@@ -53,7 +53,7 @@ export default function Text({
   }
 
   return (
-    <g className="group" onDoubleClick={handleDoubleClick}>
+    <g className="group hover:cursor-move" onDoubleClick={handleDoubleClick}>
       {isEditing ? (
         <foreignObject
           x={x}

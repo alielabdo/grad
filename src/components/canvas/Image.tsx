@@ -12,7 +12,7 @@ export default function Image({
   const { x, y, width, height, opacity, src } = layer;
 
   return (
-    <g className="group">
+    <g className="group hover:cursor-move">
       {/* Hover Border */}
       <rect
         style={{ transform: `translate(${x}px, ${y}px)` }}

@@ -20,6 +20,7 @@ export default function PostsView({
 }) {
   const [activeTab, setActiveTab] = useState<'all' | 'mine'>('all');
   const [commentContent, setCommentContent] = useState<Record<number, string>>({});
+  const [isCommentSubmitting, setIsCommentSubmitting] = useState<Record<number, boolean>>({});
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{
@@ -53,9 +54,16 @@ export default function PostsView({
   };
 
   const handleAddComment = async (postId: number) => {
-    if (commentContent[postId]?.trim()) {
+    if (!commentContent[postId]?.trim() || isCommentSubmitting[postId]) return;
+
+    try {
+      setIsCommentSubmitting(prev => ({ ...prev, [postId]: true }));
       await createComment(postId, commentContent[postId]);
       setCommentContent(prev => ({ ...prev, [postId]: '' }));
+    } catch (error) {
+      console.error("Failed to create comment:", error);
+    } finally {
+      setIsCommentSubmitting(prev => ({ ...prev, [postId]: false }));
     }
   };
 
@@ -90,75 +98,89 @@ export default function PostsView({
       </div>
       )}
 
-      {(showTabs ? filteredPosts : posts).map((post) => (
-        <div key={post.id} className="rounded-md border p-4">
-          <div className="flex justify-between">
-            <h3 className="text-lg font-medium">{post.name}</h3>
-            {allowDelete && post.createdById === userId && (
-              <button
-                onClick={() => handleDeleteConfirmation("post",post.id)}
-                className="text-sm text-red-500 hover:text-red-700"
-              >
-                Delete
-              </button>
-            )}
-          </div>
-          <p className="mt-2 text-gray-600">{post.content}</p>
+      {(showTabs ? filteredPosts : posts).map((post) => {
+        const isSubmitting = isCommentSubmitting[post.id] || false;
 
-          <div className="mt-2 text-sm text-gray-500">
-            Posted by: {post.createdBy.email} •
-            <span className="ml-1 font-medium">
-              {post.createdBy.role}
-            </span>
-          </div>
+        return (
+            <div key={post.id} className="rounded-md border p-4">
+            <div className="flex justify-between">
+              <h3 className="text-lg font-medium">{post.name}</h3>
+              {allowDelete && post.createdById === userId && (
+                <button
+                  onClick={() => handleDeleteConfirmation("post",post.id)}
+                  className="text-sm text-red-500 hover:text-red-700"
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+            <p className="mt-2 text-gray-600">{post.content}</p>
 
-          <div className="mt-4 border-t pt-4">
-            <h4 className="mb-2 text-sm font-medium">Comments</h4>
-            
-            {post.comments.map((comment: any) => (
-              <div key={comment.id} className="mb-2 rounded-md bg-gray-50 p-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">
-                      {comment.user.email}
-                    </span>
-                    <span className="text-xs font-medium">
-                      ({comment.user.role})
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {new Date(comment.createdAt).toLocaleString()}
-                    </span>
+            <div className="mt-2 text-sm text-gray-500">
+              Posted by: {post.createdBy.email} •
+              <span className="ml-1 font-medium">
+                {post.createdBy.role}
+              </span>
+            </div>
+
+            <div className="mt-4 border-t pt-4">
+              <h4 className="mb-2 text-sm font-medium">Comments</h4>
+              
+              {post.comments.map((comment: any) => (
+                <div key={comment.id} className="mb-2 rounded-md bg-gray-50 p-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">
+                        {comment.user.email}
+                      </span>
+                      <span className="text-xs font-medium">
+                        ({comment.user.role})
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </span>
+                    </div>
+                    {comment.userId === userId && (
+                      <button
+                        onClick={() => handleDeleteConfirmation('comment', comment.id)}
+                        className="text-xs text-red-500 hover:text-red-700"
+                      >
+                        Delete
+                      </button>
+                    )}
                   </div>
-                  {comment.userId === userId && (
-                    <button
-                      onClick={() => handleDeleteConfirmation('comment', comment.id)}
-                      className="text-xs text-red-500 hover:text-red-700"
-                    >
-                      Delete
-                    </button>
-                  )}
+                  <p className="mt-1 text-sm">{comment.content}</p>
                 </div>
-                <p className="mt-1 text-sm">{comment.content}</p>
+              ))}
+              <div className="mt-4 flex gap-2">
+                <input
+                  type="text"
+                  value={commentContent[post.id] || ''}
+                  onChange={(e) => setCommentContent(prev => ({ ...prev, [post.id]: e.target.value }))}
+                  placeholder="Add a comment..."
+                  className={`flex-1 rounded-md border p-2 text-sm ${isSubmitting ? 'bg-gray-50' : ''}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !isSubmitting) {
+                      handleAddComment(post.id);
+                    }
+                  }}
+                />
+                <button
+                  onClick={() => handleAddComment(post.id)}
+                  className={`rounded-md px-3 py-1 text-sm text-white ${isSubmitting
+                      ? 'bg-blue-400 cursor-not-allowed'
+                      : 'bg-blue-500 hover:bg-blue-600'
+                    }
+                  `}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Posting...' : 'Post'}
+                </button>
               </div>
-            ))}
-            <div className="mt-4 flex gap-2">
-              <input
-                type="text"
-                value={commentContent[post.id] || ''}
-                onChange={(e) => setCommentContent(prev => ({ ...prev, [post.id]: e.target.value }))}
-                placeholder="Add a comment..."
-                className="flex-1 rounded-md border p-2 text-sm"
-              />
-              <button
-                onClick={() => handleAddComment(post.id)}
-                className="rounded-md bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-600"
-              >
-                Post
-              </button>
             </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   );
 }

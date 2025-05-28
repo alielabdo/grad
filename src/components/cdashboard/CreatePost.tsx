@@ -7,13 +7,23 @@ export default function CreatePost() {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createPost(name, content);
-    setName("");
-    setContent("");
-    setIsOpen(false);
+    setIsSubmitting(true);
+    try {
+      await createPost(name, content);
+      setName("");
+      setContent("");
+      setIsOpen(false);
+    } 
+    catch (error) {
+      console.error("Failed to create post:", error);
+    } 
+    finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -38,6 +48,7 @@ export default function CreatePost() {
               onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full rounded-md border p-2"
               required
+              disabled={isSubmitting}
             />
           </div>
           <div>
@@ -51,19 +62,22 @@ export default function CreatePost() {
               className="mt-1 w-full rounded-md border p-2"
               rows={4}
               required
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex gap-2">
             <button
               type="submit"
-              className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600"
+              disabled={isSubmitting}
+              className={`rounded-md px-4 py-2 text-sm font-medium text-white ${isSubmitting ? 'cursor-not-allowed bg-blue-300 text-gray-400' : 'bg-blue-500 hover:bg-blue-600'}`}
             >
-              Post
+              {isSubmitting ? 'Posting...' : 'Post'}
             </button>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="rounded-md bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300"
+              disabled={isSubmitting}
+              className={`rounded-md px-4 py-2 text-sm font-medium ${isSubmitting ? 'cursor-not-allowed bg-gray-100' : 'bg-gray-200 hover:bg-gray-300'}`}
             >
               Cancel
             </button>

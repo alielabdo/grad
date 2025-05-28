@@ -12,7 +12,7 @@ export default function Rectangle({
 }) {
   const {x,y,width,height,fill,stroke,opacity,cornerRadius} = layer
   return (
-    <g className="group">
+    <g className="group hover:cursor-move">
       {/* Hover Border */}
       <rect
         style={{transform: `translate(${x}px, ${y}px)`}} 

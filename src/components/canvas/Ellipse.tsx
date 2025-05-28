@@ -12,7 +12,7 @@ export default function Ellipse({
 }) {
   const {x,y,width,height,fill,stroke,opacity} = layer
   return (
-    <g className="group">
+    <g className="group hover:cursor-move">
       {/* Hover Border */}
       <ellipse
         style={{transform: `translate(${x}px, ${y}px)`}} 

@@ -233,6 +233,9 @@ export default function Sidebars({
                 else if (layer?.type === LayerType.Text) {
                   return <LayerButton key={id} layerId={id} text="Text" isSelected={isSelected ?? false} icon={<AiOutlineFontSize className="h-3 w-3 text-gray-500" />} />
                 }
+                else if (layer?.type === LayerType.Image) {
+                  return <LayerButton key={id} layerId={id} text="Image" isSelected={isSelected ?? false} icon={<ImageIcon className="h-3 w-3 text-gray-500" />} />
+                }
               })}
             </div>
           </div>
