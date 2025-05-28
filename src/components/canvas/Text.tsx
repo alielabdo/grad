@@ -53,7 +53,7 @@ export default function Text({
   }
 
   return (
-    <g className="group hover:cursor-move" onDoubleClick={handleDoubleClick}>
+    <g className="group" onDoubleClick={handleDoubleClick}>
       {isEditing ? (
         <foreignObject
           x={x}
@@ -92,6 +92,7 @@ export default function Text({
               strokeWidth="2"
             />
             <text
+              className="hover:cursor-move"
               onPointerDown={(e) => onPointerDown(e, id)}
               x={x}
               y={y + fontSize}

@@ -46,6 +46,8 @@ export default function Canvas({
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
+  const [canvasState, setCanvasState] = useState<CanvasState>({ mode: CanvasMode.None })
+
   const selectAllLayers = useMutation(({ setMyPresence }) => {
     if (layerIds) {
       setMyPresence({ selection: [...layerIds] }, { addToHistory: true })
@@ -91,7 +93,7 @@ export default function Canvas({
     };
   }, [deleteLayers])
 
-  const [canvasState, setCanvasState] = useState<CanvasState>({ mode: CanvasMode.None })
+
 
   const onLayerPointerDown = useMutation(({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
     if (
@@ -461,7 +463,7 @@ export default function Canvas({
                 transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`
               }}
             >
-              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown} />))}
+              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown} canvasState={canvasState} />))}
 
               <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown} />
 
@@ -486,6 +488,7 @@ export default function Canvas({
                   opacity={100}
                   fill={colorToCss({ r: 217, g: 217, b: 217 })}
                   points={pencilDraft}
+                  canvasState={canvasState}
                 />
               }
             </g>

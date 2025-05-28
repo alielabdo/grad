@@ -1,6 +1,6 @@
 import { useStorage } from "@liveblocks/react";
 import { memo } from "react";
-import { LayerType } from "~/types";
+import { CanvasState, LayerType } from "~/types";
 import Rectangle from "./Rectangle";
 import Ellipse from './Ellipse';
 import Text from "./Text";
@@ -10,10 +10,12 @@ import { colorToCss } from "~/utils";
 
 const LayerComponent = memo(({
   id, 
-  onLayerPointerDown
+  onLayerPointerDown,
+  canvasState
 } : {
   id: string, 
-  onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void
+  onLayerPointerDown: (e: React.PointerEvent, layerId: string) => void,
+  canvasState: CanvasState
 }) => {
   const layer = useStorage((root) => root.layers.get(id))
   if(!layer) {
@@ -36,6 +38,7 @@ const LayerComponent = memo(({
           fill={layer.fill ? colorToCss(layer.fill) : "#CCC"} 
           stroke={layer.stroke ? colorToCss(layer.stroke) : "#CCC"}
           opacity={layer.opacity}
+          canvasState={canvasState}
         />
       )
     case LayerType.Image:
