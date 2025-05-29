@@ -1,5 +1,5 @@
 import { getStroke } from 'perfect-freehand'
-import { CanvasMode, CanvasState } from '~/types';
+import { CanvasMode } from '~/types';
 import { getSvgPathFromStroke } from "~/utils";
 
 export default function Path({
@@ -10,7 +10,7 @@ export default function Path({
   opacity, 
   points,
   onPointerDown,
-  canvasState
+  canvasStateMode
 } : 
 {
   x: number,
@@ -20,7 +20,7 @@ export default function Path({
   opacity: number, 
   points: number[][],
   onPointerDown?: (e: React.PointerEvent) => void,
-  canvasState: CanvasState
+  canvasStateMode: CanvasMode
 }) {
 
   const pathData = getSvgPathFromStroke(getStroke(points, {
@@ -31,7 +31,7 @@ export default function Path({
   }))
   
   return (
-    <g className={`group ${canvasState.mode === CanvasMode.Pencil ? "" : "hover:cursor-move" } `}>
+    <g className={`group ${canvasStateMode === CanvasMode.Pencil ? "" : "hover:cursor-move" } `}>
       <path
         style={{transform: `translate(${x}px, ${y}px)`}}
         d={pathData} 

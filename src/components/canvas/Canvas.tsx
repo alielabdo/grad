@@ -467,7 +467,7 @@ export default function Canvas({
                 transform: `translate(${camera.x}px, ${camera.y}px) scale(${camera.zoom})`
               }}
             >
-              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown} canvasState={canvasState} />))}
+              {layerIds?.map((layerId) => (<LayerComponent key={layerId} id={layerId} onLayerPointerDown={onLayerPointerDown} canvasStateMode={canvasState.mode} />))}
 
               <SelectionBox onResizeHandlePointerDown={onResizeHandlePointerDown} />
 
@@ -492,7 +492,7 @@ export default function Canvas({
                   opacity={100}
                   fill={colorToCss({ r: 217, g: 217, b: 217 })}
                   points={pencilDraft}
-                  canvasState={canvasState}
+                  canvasStateMode={canvasState.mode}
                 />
               }
             </g>

@@ -92,7 +92,7 @@ export default function Text({
               strokeWidth="2"
             />
             <text
-              className="hover:cursor-move"
+              className="hover:cursor-move select-none"
               onPointerDown={(e) => onPointerDown(e, id)}
               x={x}
               y={y + fontSize}
