@@ -85,7 +85,7 @@ export default function PostsView({
         <div className="flex gap-4">
         <button
           onClick={() => setActiveTab('all')}
-          className={`px-4 py-2 ${activeTab === 'all' ? "bg-gray-100" : ""}`}
+            className={`px-4 py-2 ${activeTab === 'all' ? "border-b-2 border-blue-500 text-blue-500" : ""}`}
         >
           All Posts
         </button>

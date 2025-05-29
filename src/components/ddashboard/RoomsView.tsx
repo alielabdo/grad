@@ -187,16 +187,13 @@ function SingleRoom({
           {title}
         </p>
 
-        {(selected || canEdit) && (
+        {(selected && canEdit) && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowConfirmationModal(true);
             }}
-            className={`absolute right-2 top-2 flex items-center justify-center rounded-md p-1.5 transition-all ${selected
-                ? "bg-white/90 text-red-500 shadow-md hover:bg-white"
-                : "bg-white/70 text-red-400/70 opacity-0 shadow-sm hover:bg-white/80 group-hover:opacity-100"
-              }`}
+            className="absolute right-2 top-2 flex items-center justify-center rounded-md p-1.5 transition-all bg-white/90 text-red-500 shadow-md hover:bg-white"
             title="Delete room"
           >
             <svg
