@@ -1,8 +1,21 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+
+  const handleNavigation = (path: string) => {
+    if (!isLoading) {
+      setIsLoading(true);
+      router.push(path);
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 via-sky-50 to-emerald-50 px-4 py-12">
       {/* Subtle grid pattern overlay */}
@@ -46,18 +59,27 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col items-center justify-center space-y-4 pt-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-            <Link
-              href="/signup"
-              className="w-full transform rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-medium text-white shadow-md transition-all hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+            <button
+              onClick={() => handleNavigation('/signup')}
+              disabled={isLoading}
+              className={`w-full transform rounded-lg px-6 py-3 text-sm font-medium text-white shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto ${isLoading
+                  ? 'cursor-not-allowed bg-gradient-to-r from-blue-400 to-indigo-400'
+                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-105 hover:shadow-lg'
+                }`}
             >
-              Get Started - It's Free
-            </Link>
-            <Link
-              href="/signin"
-              className="w-full transform rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-700 transition-all hover:scale-105 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto"
+              {isLoading ? 'Loading...' : "Get Started - It's Free"}
+            </button>
+
+            <button
+              onClick={() => handleNavigation('/signin')}
+              disabled={isLoading}
+              className={`w-full transform rounded-lg border px-6 py-3 text-sm font-medium shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto ${isLoading
+                  ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400'
+                  : 'border-gray-300 bg-white text-gray-700 hover:scale-105 hover:bg-gray-50'
+                }`}
             >
-              Existing Account? Sign In
-            </Link>
+              {isLoading ? 'Loading...' : 'Existing Account? Sign In'}
+            </button>
           </div>
         </div>
       </div>

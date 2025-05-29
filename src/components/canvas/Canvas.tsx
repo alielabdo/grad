@@ -23,12 +23,16 @@ export default function Canvas({
   roomName,
   roomId,
   othersWithAccessToRoom,
-  disabled
+  disabled,
+  ownerId,
+  userId
 } : {
   roomName: string,
   roomId: string,
   othersWithAccessToRoom: User[],
-  disabled?: boolean
+  disabled?: boolean,
+  ownerId: string,
+  userId?: string
 }) {
 
   const roomColor = useStorage((root) => root.roomColor)
@@ -524,6 +528,8 @@ export default function Canvas({
         othersWithAccessToRoom={othersWithAccessToRoom}
         disabled={disabled}
         setCanvasState={setCanvasState}
+        ownerId={ownerId}
+        userId={userId}
       />
       
     </div>

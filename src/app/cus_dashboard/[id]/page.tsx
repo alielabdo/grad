@@ -39,6 +39,8 @@ export default async function Page({ params }: { params: ParamsType }) {
         roomId={id}
         othersWithAccessToRoom={room.roomInvites.map((invite) => invite.user)}
         disabled={true}
+        ownerId={room.ownerId}
+        userId={session?.user.id}
       />
     </Room>
   )

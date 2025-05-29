@@ -29,7 +29,9 @@ export default function Sidebars({
   roomId,
   othersWithAccessToRoom,
   disabled,
-  setCanvasState
+  setCanvasState,
+  ownerId,
+  userId
 }: {
   leftIsMinimized: boolean,
   setLeftIsMinimized: (value: boolean) => void,
@@ -37,7 +39,9 @@ export default function Sidebars({
   roomId: string,
   othersWithAccessToRoom: User[],
   disabled?: boolean
-  setCanvasState: (state: CanvasState) => void
+  setCanvasState: (state: CanvasState) => void,
+  ownerId: string,
+  userId?: string
 }) {
   const me = useSelf();
   const others = useOthers();
@@ -307,10 +311,12 @@ export default function Sidebars({
             </div>
             {!disabled && (
               <div className="flex gap-2">
-                <ShareMenu
-                  roomId={roomId}
-                  othersWithAccessToRoom={othersWithAccessToRoom}
-                />
+                {ownerId === userId && (
+                  <ShareMenu
+                    roomId={roomId}
+                    othersWithAccessToRoom={othersWithAccessToRoom}
+                  />
+                )}
 
                 <button
                   onClick={handleExportToPDF}
@@ -574,10 +580,12 @@ export default function Sidebars({
           </div>
           {!disabled && (
             <div className="flex gap-2">
-              <ShareMenu
-                roomId={roomId}
-                othersWithAccessToRoom={othersWithAccessToRoom}
-              />
+              {ownerId === userId && (
+                <ShareMenu
+                  roomId={roomId}
+                  othersWithAccessToRoom={othersWithAccessToRoom}
+                />
+              )}
               
               <button
                 onClick={handleExportToPDF}
