@@ -62,10 +62,7 @@ export default function Page() {
             <button
               onClick={() => handleNavigation('/signup')}
               disabled={isLoading}
-              className={`w-full transform rounded-lg px-6 py-3 text-sm font-medium text-white shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto ${isLoading
-                  ? 'cursor-not-allowed bg-gradient-to-r from-blue-400 to-indigo-400'
-                  : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-105 hover:shadow-lg'
-                }`}
+              className={`w-full transform rounded-lg px-6 py-3 text-sm font-medium text-white shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:w-auto ${isLoading ? 'cursor-not-allowed bg-gradient-to-r from-blue-400 to-indigo-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:scale-105 hover:shadow-lg'}`}
             >
               {isLoading ? 'Loading...' : "Get Started - It's Free"}
             </button>

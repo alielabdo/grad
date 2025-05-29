@@ -31,6 +31,7 @@ export default function RoomsView({
 
   const [viewMode, setViewMode] = useState("owns");
   const [selected, setSelected] = useState<string | null>(null)
+  const [navigating, setNavigating] = useState(false);
 
   const router = useRouter();
 
@@ -100,16 +101,17 @@ export default function RoomsView({
                 color={roomColor}
                 selected={selected === room.id}
                 select={() => setSelected(room.id)}
-                navigateTo={() => {
+                navigateTo={async () => {
+                  if (navigating) return;
+                  setNavigating(true);
                   if (disabled) {
                     router.push("/cus_dashboard/" + room.id)
-                  }
-                  else {
+                  } else {
                     router.push("/des_dashboard/" + room.id)
                   }
-                  
                 }}
                 canEdit={viewMode === "owns" && !disabled}
+                navigating={navigating}
               />
             </React.Fragment>
           )
@@ -127,7 +129,8 @@ function SingleRoom({
   selected, 
   select, 
   navigateTo,
-  canEdit
+  canEdit,
+  navigating
 } : 
 {
   id: string,
@@ -137,7 +140,8 @@ function SingleRoom({
   selected: boolean,
   select: () => void,
   navigateTo: () => void,
-  canEdit: boolean
+  canEdit: boolean,
+  navigating: boolean
 }) {
 
   const [isEditing, setIsEditing] = useState(false);
@@ -181,7 +185,7 @@ function SingleRoom({
         onDoubleClick={navigateTo}
         onClick={select}
         style={{backgroundColor: color}}
-        className={`flex h-56 w-96 cursor-pointer items-center justify-center rounded-md ${selected ? "border-2 border-blue-500" : "border border-[#e8e8e8]"}`}
+        className={`flex h-56 w-96 cursor-pointer items-center justify-center rounded-md ${selected ? "border-2 border-blue-500" : "border border-[#e8e8e8]"} ${navigating ? "cursor-not-allowed pointer-events-none opacity-60" : ""}`}
       >
         <p className="text-md select-none font-medium">
           {title}
