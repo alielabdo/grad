@@ -113,7 +113,6 @@ export async function shareRoom(id: string, inviteEmail: string) {
   })
 
   revalidatePath("des_dashboard");
-  revalidatePath("cus_dashboard");
 }
 
 export async function deleteInvitation(id: string, inviteEmail: string) {
@@ -140,5 +139,4 @@ export async function deleteInvitation(id: string, inviteEmail: string) {
   })
 
   revalidatePath("des_dashboard")
-  revalidatePath("cus_dashboard")
 }
