@@ -25,7 +25,7 @@ export default function Page() {
         <div className="max-h-[calc(100vh-4rem)] overflow-y-auto p-8 space-y-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 sm:text-5xl">
-              Welcome to <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">DesignCollab</span>
+              Welcome to <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Draftly</span>
             </h1>
 
             <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">

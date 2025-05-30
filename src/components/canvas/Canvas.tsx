@@ -97,8 +97,6 @@ export default function Canvas({
     };
   }, [deleteLayers])
 
-
-
   const onLayerPointerDown = useMutation(({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
     if (
       canvasState.mode === CanvasMode.Pencil || canvasState.mode === CanvasMode.Inserting
@@ -481,7 +479,7 @@ export default function Canvas({
                 />
               )}
 
-              <MultiplayerGuides />
+              <MultiplayerGuides canvasStateMode={canvasState.mode}/>
               
               {
                 pencilDraft !== null &&
