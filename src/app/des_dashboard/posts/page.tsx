@@ -75,7 +75,7 @@ export default async function Page() {
         </div>
 
         {/* Main content */}
-        <div className="flex h-full w-full flex-col md:ml-[264px] md:w-[calc(100%-264px)]">
+        <div className="flex h-full w-full flex-col">
           <div className="flex min-h-[50px] items-center border-b border-gray-200 bg-white/90 pl-12 backdrop-blur-sm md:pl-8">
             <h2 className="text-[13px] select-none">All Posts</h2>
           </div>
