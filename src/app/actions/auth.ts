@@ -17,8 +17,8 @@ export async function authenticate(
   formData: FormData
 ) {
   try {
-    const email = formData.get('email')?.toString();
-    const password = formData.get('password')?.toString();
+    const email = formData.get('email')?.toString() as string;
+    const password = formData.get('password')?.toString() as string;
 
     await signIn('credentials', {
       email,
